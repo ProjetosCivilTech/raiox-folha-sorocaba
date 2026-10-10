@@ -1,18 +1,24 @@
 /* =========================================================================
 Pagina Sobre — Observatório Social do Brasil — Sorocaba
-v5
+v6
 
 Compatível com:
-  - sobre.html (cabeçalho unificado, IDs atualizados)
-  - app.js v5 (helpers, badge-atualizacao, breadcrumb, drawer)
+  - sobre.html (cabeçalho unificado, dados abertos em XLSX)
+  - app.js v6 (helpers, badge, breadcrumb, drawer)
 
 Estrutura: IIFE (evita poluir o escopo global)
+
+Mudanças v6:
+  - Fallbacks de erro/vazio apontam para dados/excel/*.xlsx
+    (o painel oferece XLSX ao público; CSV continua como bastidor técnico)
+  - Texto "Baixar CSV" → "Baixar XLSX" no fallback de cobertura de gênero
 
 Cobre:
   - Período no cabeçalho
   - Selo de auditoria dinâmico (calcula pendências reais)
   - Fonte dos dados (kpis.json)
-  - Cobertura da análise de gênero (genero_geral.csv)
+  - Cobertura da análise de gênero (genero_geral.csv — carregado para
+    cálculo interno, mas o fallback de erro aponta para o XLSX público)
   - Mapas públicos: regimes, secretarias, escolaridades
   - Rodapé com data de atualização
 ========================================================================= */
@@ -315,7 +321,6 @@ Cobre:
           escaparHTML(textoCelula(par[1])) + "</dd></div>";
       }).join("");
 
-      // Nota abaixo
       const pai = alvo.parentElement;
       if (pai) {
         const existente = pai.querySelector(".aviso-metodologico.cobertura-nota");
@@ -334,7 +339,7 @@ Cobre:
       console.error("[sobre] Erro ao carregar cobertura de gênero:", e);
       alvo.innerHTML =
         '<div class="carregando">Não foi possível carregar a cobertura de gênero. ' +
-        '<a href="dados/genero_geral.csv" download>Baixar CSV</a>.</div>';
+        '<a href="dados/excel/genero_geral.xlsx" download>Baixar XLSX</a>.</div>';
     }
   }
 
@@ -348,19 +353,19 @@ Cobre:
     mostrarCarregando(tbody);
     try {
       const dados = await carregarCSV("dados/regime_map.csv");
-      if (!dados.length) return mostrarVazio(tbody, "dados/regime_map.csv");
+      if (!dados.length) return mostrarVazio(tbody, "dados/excel/regime_map.xlsx");
       regimesDados = dados;
       renderizarTabelaRegimes(dados);
     } catch (e) {
       console.error("[sobre] Erro regimes:", e);
-      mostrarErro(tbody, "Não foi possível carregar o mapa de regimes.", "dados/regime_map.csv");
+      mostrarErro(tbody, "Não foi possível carregar o mapa de regimes.", "dados/excel/regime_map.xlsx");
     }
   }
 
   function renderizarTabelaRegimes(lista) {
     const tbody = $("#tabela-regimes tbody");
     if (!tbody) return;
-    if (!lista || lista.length === 0) return mostrarVazio(tbody, "dados/regime_map.csv");
+    if (!lista || lista.length === 0) return mostrarVazio(tbody, "dados/excel/regime_map.xlsx");
     tbody.innerHTML = lista.map(function (r) {
       const cru = r.regime_cru || r.regime || r.codigo || "";
       const base = r.regime_base || r.base || "";
@@ -400,19 +405,19 @@ Cobre:
     mostrarCarregando(tbody);
     try {
       const dados = await carregarCSV("dados/secretaria_map.csv");
-      if (!dados.length) return mostrarVazio(tbody, "dados/secretaria_map.csv");
+      if (!dados.length) return mostrarVazio(tbody, "dados/excel/secretaria_map.xlsx");
       secretariasDados = dados;
       renderizarTabelaSecretarias(dados);
     } catch (e) {
       console.error("[sobre] Erro secretarias:", e);
-      mostrarErro(tbody, "Não foi possível carregar o mapa de secretarias.", "dados/secretaria_map.csv");
+      mostrarErro(tbody, "Não foi possível carregar o mapa de secretarias.", "dados/excel/secretaria_map.xlsx");
     }
   }
 
   function renderizarTabelaSecretarias(lista) {
     const tbody = $("#tabela-secretarias-mapa tbody");
     if (!tbody) return;
-    if (!lista || lista.length === 0) return mostrarVazio(tbody, "dados/secretaria_map.csv");
+    if (!lista || lista.length === 0) return mostrarVazio(tbody, "dados/excel/secretaria_map.xlsx");
     tbody.innerHTML = lista.map(function (r) {
       const cru = r.secretaria_crua || r.secretaria_cru || r.nome_cru || "";
       const canon = r.secretaria_canonica || r.nome_canonico || "";
@@ -447,7 +452,7 @@ Cobre:
     mostrarCarregando(tbody);
     try {
       const dados = await carregarCSV("dados/escolaridade_map.csv");
-      if (!dados.length) return mostrarVazio(tbody, "dados/escolaridade_map.csv");
+      if (!dados.length) return mostrarVazio(tbody, "dados/excel/escolaridade_map.xlsx");
 
       dados.sort(function (a, b) {
         const oa = Number(a.ordem || a.order || 0);
@@ -467,7 +472,7 @@ Cobre:
       }).join("");
     } catch (e) {
       console.error("[sobre] Erro escolaridades:", e);
-      mostrarErro(tbody, "Não foi possível carregar o mapa de escolaridades.", "dados/escolaridade_map.csv");
+      mostrarErro(tbody, "Não foi possível carregar o mapa de escolaridades.", "dados/excel/escolaridade_map.xlsx");
     }
   }
 

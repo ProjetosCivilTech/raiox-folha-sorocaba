@@ -298,11 +298,12 @@
         </p>
         <div class="tabela-wrap">
           <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+            <caption>Regras de supressão estatística aplicadas em cada nível de análise.</caption>
             <thead>
               <tr>
-                <th style="text-align: left; padding: 0.5rem 0.75rem;">Análise</th>
-                <th style="text-align: left; padding: 0.5rem 0.75rem;">n mínimo</th>
-                <th style="text-align: left; padding: 0.5rem 0.75rem;">Comportamento</th>
+                <th scope="col" style="text-align: left; padding: 0.5rem 0.75rem;">Análise</th>
+                <th scope="col" style="text-align: left; padding: 0.5rem 0.75rem;">n mínimo</th>
+                <th scope="col" style="text-align: left; padding: 0.5rem 0.75rem;">Comportamento</th>
               </tr>
             </thead>
             <tbody>
@@ -393,6 +394,7 @@
         </div>
         <div class="tabela-wrap" style="max-height: 500px; overflow-y: auto;">
           <table id="tabela-regimes">
+            <caption>Mapa canônico de regimes: código bruto do portal × agrupamento auditável × fundamentação legal.</caption>
             <thead>
               <tr>
                 <th scope="col">Regime (cru)</th>
@@ -417,6 +419,7 @@
         </div>
         <div class="tabela-wrap" style="max-height: 400px; overflow-y: auto;">
           <table id="tabela-secretarias-mapa">
+            <caption>Mapa canônico de secretarias: nome bruto do portal × nome canônico × sigla.</caption>
             <thead>
               <tr>
                 <th scope="col">Nome (cru)</th>
@@ -433,6 +436,7 @@
         <h3 style="font-size: 1rem; color: var(--azul-escuro); margin: 1.5rem 0 0.5rem;">Mapa de escolaridades</h3>
         <div class="tabela-wrap" style="max-height: 400px; overflow-y: auto;">
           <table id="tabela-escolaridades">
+            <caption>Mapa canônico de escolaridades: rótulo bruto × rótulo canônico × ordem de exibição.</caption>
             <thead>
               <tr>
                 <th scope="col">Escolaridade (crua)</th>
@@ -531,16 +535,10 @@
         <dl class="selo" id="selo-conteudo">
           <div class="carregando">Carregando selo…</div>
         </dl>
-        <noscript>
-          <div class="aviso-noscript">
-            Para ver o selo de auditoria, baixe diretamente o arquivo
-            <a href="dados/auditoria.json" download>auditoria.json</a>.
-          </div>
-        </noscript>
       </div>
     </section>
 
-    <!-- Base legal e limites -->
+    <!-- Base legal e limites — COM O NOVO BLOCO DE CONFIABILIDADE -->
     <section class="secao" id="base-legal">
       <h2 class="secao-titulo">Base legal e limites</h2>
       <div class="cartao">
@@ -560,12 +558,13 @@
           <li>Nome individual associado a qualquer alerta de anomalia.</li>
         </ul>
 
-        <h3 style="font-size: 1rem; color: var(--azul-escuro); margin: 1.25rem 0 0.75rem;">LGPD</h3>
+        <h3 style="font-size: 1rem; color: var(--azul-escuro); margin: 1.25rem 0 0.75rem;">LGPD e proteção de dados</h3>
         <p style="margin-bottom: 1rem;">
-          O projeto segue os princípios da Lei Geral de Proteção de Dados (Lei 13.709/2018).
-          Todos os dados publicados são agregados ou estritamente públicos, conforme
-          decisão do STF. Não publicamos microdados individuais identificáveis em nenhuma
-          página do site.
+          <strong>Conformidade LGPD:</strong> este painel obedece rigorosamente à Lei Geral de
+          Proteção de Dados (Lei 13.709/2018). <strong>Nenhum dado individual identificável é publicado</strong>.
+          Todas as tabelas e gráficos apresentam dados agregados (médias, medianas, contagens),
+          impossibilitando a identificação de servidores específicos. Não publicamos microdados
+          individuais em nenhuma página do site.
         </p>
         <p style="margin-bottom: 1rem;">
           <strong>Sobre a análise de gênero:</strong> a inferência de gênero por primeiro
@@ -575,10 +574,17 @@
           como "indefinido" e excluídos dos cruzamentos, garantindo que nenhuma
           conclusão se apoie em inferências incertas.
         </p>
+
+        <h3 style="font-size: 1rem; color: var(--azul-escuro); margin: 1.25rem 0 0.75rem;">Fonte e confiabilidade</h3>
+        <div class="aviso-metodologico" style="margin-top: 0;">
+          <p><strong>Fonte primária:</strong> os dados apresentados têm como origem o <a href="https://transparencia.sorocaba.sp.gov.br/" target="_blank" rel="noopener">Portal da Transparência de Sorocaba</a>. A extração, o tratamento e a canonização são realizados pelo Observatório Social do Brasil — Sorocaba.</p>
+          <p><strong>Prevalece o dado oficial:</strong> em caso de divergência pontual entre este painel e os relatórios oficiais publicados pela Prefeitura, <strong>prevalece o dado oficial do município</strong>. Este projeto é uma ferramenta independente de apoio ao controle social e auditoria cidadã, e não substitui as fontes primárias.</p>
+          <p><strong>Uso pretendido:</strong> o painel é destinado a jornalistas, pesquisadores, gestores públicos e cidadãos em geral, para fins de acompanhamento e diagnóstico. Não deve ser usado como base única para decisões judiciais, administrativas ou disciplinares sem consulta às fontes primárias.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Dados abertos -->
+    <!-- Dados abertos — mantido em XLSX -->
     <section class="secao" id="dados-abertos">
       <h2 class="secao-titulo">Dados abertos</h2>
       <div class="cartao">

@@ -22,7 +22,7 @@
   <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
 
   <!-- =====================================================================
-       CABEÇALHO UNIFICADO — Logo completo + Lupa
+       CABEÇALHO UNIFICADO
        ===================================================================== -->
   <header class="cabecalho">
     <div class="cabecalho-conteudo">
@@ -100,6 +100,7 @@
       </p>
     </section>
 
+    <!-- Indicadores gerais -->
     <section class="secao">
       <h2 class="secao-titulo">Indicadores gerais</h2>
       <div class="kpis" id="kpis-principais">
@@ -109,12 +110,12 @@
           <div class="detalhe" id="kpi-folha-ultimo-detalhe"></div>
         </div>
         <div class="kpi">
-          <div class="rotulo">Servidores (último mês)</div>
+          <div class="rotulo">Matrículas ativas (último mês)</div>
           <div class="valor" id="kpi-matriculas-ultimo">Carregando…</div>
-          <div class="detalhe">Matrículas únicas no mês</div>
+          <div class="detalhe">Vínculos ativos no mês (não pessoas físicas)</div>
         </div>
         <div class="kpi">
-          <div class="rotulo">Custo médio por servidor</div>
+          <div class="rotulo">Custo médio por matrícula</div>
           <div class="valor" id="kpi-ticket-medio">Carregando…</div>
           <div class="detalhe">Folha bruta ÷ matrículas (último mês)</div>
         </div>
@@ -126,7 +127,7 @@
         <div class="kpi">
           <div class="rotulo">Variação no período</div>
           <div class="valor" id="kpi-variacao">Carregando…</div>
-          <div class="detalhe">Nominal; em valores corrigidos pelo IPCA, veja abaixo</div>
+          <div class="detalhe">Nominal; correção pelo IPCA abaixo no gráfico</div>
         </div>
         <div class="kpi">
           <div class="rotulo">Secretarias</div>
@@ -136,6 +137,7 @@
       </div>
     </section>
 
+    <!-- Evolução mensal -->
     <section class="secao">
       <h2 class="secao-titulo">Evolução mensal da folha</h2>
       <div class="filtros" role="tablist" aria-label="Alternar visualização">
@@ -148,13 +150,15 @@
       <p id="descricao-folha-mensal" class="visually-hidden">
         Gráfico de linha mostrando a evolução mensal da folha bruta entre janeiro de 2022 e o último mês disponível.
       </p>
+
       <div class="aviso-metodologico">
-        <p><strong>Sobre os valores:</strong> nominais, sem correção pelo IPCA. A série cobre o período disponível no Portal da Transparência no momento da extração.</p>
-        <p><strong>Sobre os picos de lançamento:</strong> a série conta <em>pagamentos</em>, não servidores. Picos em dezembro refletem o 13º salário.</p>
-        <p>Para ler <strong>efetivo</strong>, use a série de matrículas. Para acompanhar o <strong>custo recorrente</strong>, alterne para a visão "Recorrente" acima do gráfico.</p>
+        <p><strong>1. Nominal vs. Real:</strong> a série "Total" mostra valores nominais (o dinheiro efetivamente pago na época). A série "Real" aplica o IPCA (IBGE) com base em jan/2022, permitindo ver se a folha cresceu acima ou abaixo da inflação.</p>
+        <p><strong>2. Sazonalidade:</strong> picos recorrentes em dezembro refletem o pagamento do 13º salário. Para analisar o custo fixo da máquina pública, utilize a visão "Recorrente", que exclui 13º, férias e rescisões.</p>
+        <p><strong>3. O que é "servidor" aqui?</strong> O painel conta <em>matrículas ativas</em>, não pessoas físicas. Um servidor com dois vínculos (ex.: professor com cargo de chefia) conta como duas matrículas e recebe em duas linhas distintas.</p>
       </div>
     </section>
 
+    <!-- Composição por categoria -->
     <section class="secao">
       <h2 class="secao-titulo">Composição da folha por categoria</h2>
       <div class="grade grade-2">
@@ -179,6 +183,7 @@
       </div>
     </section>
 
+    <!-- Top 15 secretarias -->
     <section class="secao">
       <h2 class="secao-titulo">Top 15 secretarias por folha acumulada</h2>
       <div class="tabela-wrap">
@@ -202,6 +207,7 @@
       </div>
     </section>
 
+    <!-- Selo de auditoria -->
     <section class="secao">
       <h2 class="secao-titulo">Selo de auditoria</h2>
       <dl class="selo" id="selo-conteudo">

@@ -1,7 +1,7 @@
 /* ==========================================================================
    Raio-X do Quadro de Pessoal — Sorocaba
    Design System e Estilos Globais
-   v5 — Cabeçalho unificado com logo completo + lupa
+   v6 — Cabeçalho unificado com lupa maior (grid 2x2)
    ========================================================================== */
 
 /* ==========================================================================
@@ -204,7 +204,7 @@ code {
 }
 
 /* ==========================================================================
-   4. LAYOUT — CABEÇALHO UNIFICADO
+   4. LAYOUT — CABEÇALHO UNIFICADO (v6)
    ========================================================================== */
 
 .cabecalho {
@@ -266,23 +266,31 @@ code {
   opacity: 0.9;
 }
 
-/* Metadados e Lupa (Lado Direito) */
+/* Metadados e Lupa (Lado Direito) — grid 2x2 */
 .cabecalho-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--espaco-xs);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: var(--espaco-md);
+  row-gap: var(--espaco-xs);
   flex-shrink: 0;
+  max-width: 480px;
 }
 
 .cabecalho-lupa {
-  height: 50px;
+  grid-column: 1;
+  grid-row: 1 / 3;          /* ocupa as duas linhas da esquerda */
+  height: 70px;             /* lupa maior, agora que sobra espaço */
   width: auto;
   display: block;
-  margin-bottom: var(--espaco-xs);
+  margin-bottom: 0;
 }
 
 .badge-atualizacao {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
   background-color: rgba(255, 255, 255, 0.2);
   color: var(--branco);
   padding: var(--espaco-xs) var(--espaco-sm);
@@ -291,6 +299,7 @@ code {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .badge-atualizacao.indisponivel {
@@ -298,10 +307,13 @@ code {
 }
 
 .cabecalho-periodo {
+  grid-column: 2;
+  grid-row: 2;
   font-size: 0.8rem;
   color: var(--branco);
   opacity: 0.95;
-  text-align: right;
+  text-align: left;
+  white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -1061,34 +1073,40 @@ footer a:hover,
     font-size: 0.75rem;
   }
 
+  /* Cabeçalho meta em grid 2x2 também no mobile */
   .cabecalho-meta {
-    align-items: flex-start;
     width: 100%;
+    max-width: none;
     margin-top: var(--espaco-sm);
+    grid-template-columns: auto 1fr;
+    column-gap: var(--espaco-sm);
   }
 
   .cabecalho-lupa {
-    height: 40px;
+    height: 55px;
   }
 
+  .cabecalho-periodo {
+    white-space: normal;
+  }
+
+  /* Menu: esconde os links, mostra só quando a classe "visivel" estiver presente */
   .menu-conteudo {
-    flex-direction: column;
-    gap: var(--espaco-sm);
+    flex-wrap: wrap;
+  }
+
+  .menu a {
+    display: none;
+    width: 100%;
+  }
+
+  .menu a.visivel {
+    display: block;
   }
 
   .menu-hamburguer {
     display: block;
-    align-self: flex-end;
-  }
-
-  .menu-links {
-    display: none;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .menu-links.aberto {
-    display: flex;
+    margin-left: auto;
   }
 
   main {
@@ -1122,6 +1140,10 @@ footer a:hover,
 
   .selo-grid {
     grid-template-columns: 1fr;
+  }
+
+  .cabecalho-lupa {
+    height: 45px;
   }
 }
 

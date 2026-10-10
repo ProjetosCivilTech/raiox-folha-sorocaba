@@ -23,7 +23,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
   <link rel="icon" href="imagens/favicon.ico">
-  <link rel="stylesheet" href="assets/style.css?v=5">
+  <link rel="stylesheet" href="assets/style.css?v=6">
 
   <script>
     document.documentElement.classList.remove("no-js");
@@ -114,6 +114,7 @@
       </p>
     </section>
 
+    <!-- Cobertura da análise -->
     <section class="secao" id="cobertura-genero">
       <h2 class="secao-titulo">Cobertura da análise</h2>
       <div class="cartao">
@@ -128,33 +129,40 @@
         <noscript>
           <div class="aviso-noscript">
             Para ver a cobertura, baixe diretamente o arquivo
-            <a href="dados/genero_geral.csv" download>genero_geral.csv</a>.
+            <a href="dados/excel/genero_geral.xlsx" download>genero_geral.xlsx</a>.
           </div>
         </noscript>
       </div>
     </section>
 
+    <!-- Disclaimer principal — blindagem contra interpretações erradas -->
     <section class="secao" id="disclaimer">
       <div class="aviso-metodologico" style="font-size: 0.9rem; line-height: 1.6;">
-        <strong>Como o gênero é definido nesta análise.</strong>
-        O gênero de cada servidor é <strong>inferido</strong> a partir do primeiro nome,
-        com base no Censo 2010 do IBGE (tratado por Álvaro Justen/Brasil.IO, licença CC-BY-SA).
-        Não é autodeclaração. Nomes com classificação ambígua são agrupados como
-        <em>"indefinido"</em> e <strong>excluídos</strong> dos cruzamentos por cargo, secretaria,
-        escolaridade e faixa salarial.
-        <br><br>
-        Os números desta página descrevem <strong>padrões agregados</strong> do quadro municipal.
-        Não substituem a análise de casos individuais, que dependem de tempo de serviço,
-        progressão na carreira e outras variáveis não capturadas aqui.
-        <br><br>
-        <strong>Aviso:</strong> estes dados são agregados para análise de padrões.
-        Não refletem necessariamente diferenças salariais por gênero para casos
-        individuais, que dependem de tempo de serviço, escolaridade e progressão
-        na carreira. Não devem ser usados como prova em processos individuais
-        sem apuração específica.
+        <p style="margin-bottom: 0.75rem;">
+          <strong>Como o gênero é definido nesta análise.</strong>
+          O gênero de cada servidor é <strong>inferido</strong> a partir do primeiro nome,
+          com base no Censo 2010 do IBGE (tratado por Álvaro Justen/Brasil.IO, licença CC-BY-SA).
+          Não é autodeclaração. Nomes com classificação ambígua são agrupados como
+          <em>"indefinido"</em> e <strong>excluídos</strong> dos cruzamentos por cargo,
+          secretaria, escolaridade e faixa salarial.
+        </p>
+        <p style="margin-bottom: 0.75rem;">
+          <strong>Diferença descritiva, não causal.</strong> Os números desta página descrevem
+          <strong>padrões agregados</strong> do quadro municipal. Diferenças salariais brutas
+          <strong>não consideram</strong> variáveis como tempo de casa, nível de cargo,
+          escolaridade ou jornada. Para uma análise de equidade seria necessário
+          <strong>controle estatístico multivariado</strong>, que este painel não realiza.
+        </p>
+        <p>
+          <strong>Não substitui análise de casos individuais.</strong> Os resultados
+          <strong>não devem ser usados como prova</strong> em processos individuais sem
+          apuração específica. O que o painel mostra são padrões de composição do quadro,
+          não julgamentos sobre pessoas ou gestões.
+        </p>
       </div>
     </section>
 
+    <!-- Achados principais -->
     <section class="secao" id="achados">
       <h2 class="secao-titulo">Achados principais</h2>
       <div class="kpis" id="insights">
@@ -162,6 +170,7 @@
       </div>
     </section>
 
+    <!-- Panorama geral -->
     <section class="secao" id="panorama">
       <h2 class="secao-titulo">Panorama geral</h2>
       <div class="grade-2">
@@ -182,6 +191,7 @@
         <div class="cartao-titulo">Composição por gênero (acumulado)</div>
         <div class="tabela-wrap">
           <table id="tabela-geral">
+            <caption>Distribuição de matrículas e folha por gênero inferido, no período acumulado.</caption>
             <thead>
               <tr>
                 <th scope="col">Gênero</th>
@@ -200,6 +210,7 @@
       </div>
     </section>
 
+    <!-- Liderança -->
     <section class="secao" id="lideranca">
       <h2 class="secao-titulo">Representação em cargos de liderança</h2>
       <div class="aviso-metodologico" id="insight-lideranca">Carregando…</div>
@@ -218,6 +229,7 @@
       </div>
     </section>
 
+    <!-- Composição por categoria -->
     <section class="secao" id="categoria">
       <h2 class="secao-titulo">Composição por categoria de vínculo</h2>
       <div class="cartao">
@@ -228,6 +240,7 @@
       <div class="cartao" style="margin-top:1.5rem;">
         <div class="tabela-wrap">
           <table id="tabela-categoria">
+            <caption>Participação feminina por categoria de vínculo, com folha média de cada gênero.</caption>
             <thead>
               <tr>
                 <th scope="col">Categoria</th>
@@ -246,6 +259,7 @@
       </div>
     </section>
 
+    <!-- Participação por secretaria -->
     <section class="secao" id="secretaria">
       <h2 class="secao-titulo">Participação feminina por secretaria</h2>
       <div class="cartao">
@@ -255,25 +269,26 @@
       </div>
     </section>
 
+    <!-- Gap salarial — bloco mais crítico da blindagem -->
     <section class="secao" id="gap-salarial">
       <h2 class="secao-titulo">Diferença salarial por cargo</h2>
       <div class="aviso-metodologico" id="insight-gap">Carregando…</div>
 
       <div class="aviso-metodologico" style="margin-bottom: 1rem;">
-        <strong>Regra de amostra mínima:</strong> a tabela e o gráfico incluem apenas cargos
-        com <strong>pelo menos 10 servidores de cada gênero</strong> no último ano (threshold
-        de n ≥ 10). Para o gráfico, filtramos <strong>n ≥ 20</strong> em cada gênero, para
-        evitar conclusões estatisticamente frágeis. Cargos com amostra insuficiente são
-        omitidos.
+        <p><strong>Leitura cautelosa:</strong> a diferença salarial apresentada é uma medida <strong>descritiva (bruta)</strong>, e não causal. Este painel <em>não</em> controla variáveis como tempo de casa, nível de cargo, escolaridade ou carga horária.</p>
+        <p>Portanto, o "gap" reflete majoritariamente a <strong>composição do quadro</strong> (ex.: maior presença feminina em cargos de base e masculina em cargos de chefia ou de carreiras específicas), e não necessariamente diferença de pagamento para a <em>mesma</em> função.</p>
+        <p><strong>Robustez estatística:</strong> para evitar ruído, cargos com menos de <strong>20 servidores de cada gênero</strong> são automaticamente excluídos do gráfico. A tabela abaixo usa corte de <strong>n ≥ 10</strong> (o número aparece na coluna "Servidores (F/M)"), priorizando cobertura. Cargos com amostra insuficiente são omitidos.</p>
       </div>
+
       <div class="cartao">
         <div class="grafico-container" style="height: 560px;">
-          <canvas id="grafico-gap" aria-label="Gráfico de barras horizontais mostrando a diferença salarial entre homens e mulheres nos cargos com pelo menos 10 servidores de cada gênero"></canvas>
+          <canvas id="grafico-gap" aria-label="Gráfico de barras horizontais mostrando a diferença salarial entre homens e mulheres nos cargos com pelo menos 20 servidores de cada gênero"></canvas>
         </div>
       </div>
       <div class="cartao" style="margin-top:1.5rem;">
         <div class="tabela-wrap" style="max-height: 480px; overflow-y: auto;">
           <table id="tabela-gap">
+            <caption>Diferença salarial por cargo (corte mínimo de 10 servidores de cada gênero).</caption>
             <thead>
               <tr>
                 <th scope="col">Cargo</th>
@@ -292,6 +307,7 @@
       </div>
     </section>
 
+    <!-- Faixa salarial -->
     <section class="secao" id="faixa-salarial">
       <h2 class="secao-titulo">Distribuição por faixa salarial</h2>
       <div class="cartao">
@@ -301,6 +317,7 @@
       </div>
     </section>
 
+    <!-- Selo de auditoria -->
     <section class="secao" id="selo">
       <h2 class="secao-titulo">Selo de auditoria</h2>
       <dl class="selo" id="selo-conteudo">
@@ -357,14 +374,15 @@
 
   <noscript>
     <div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;">
-      <strong>Este painel usa JavaScript para carregar os arquivos CSV/JSON e renderizar gráficos.</strong>
-      Sem JavaScript, os dados brutos continuam disponíveis na pasta <a href="dados/">dados/</a>.
+      <strong>Este painel usa JavaScript para carregar os dados e renderizar gráficos.</strong>
+      Sem JavaScript, os dados brutos continuam disponíveis na pasta
+      <a href="dados/excel/">dados/excel/</a> (formato XLSX).
     </div>
   </noscript>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
-  <script src="assets/app.js?v=5" defer></script>
-  <script src="assets/pagina_genero.js?v=5" defer></script>
+  <script src="assets/app.js?v=6" defer></script>
+  <script src="assets/pagina_genero.js?v=6" defer></script>
 </body>
 </html>

@@ -15,7 +15,6 @@
   <meta property="og:locale" content="pt_BR">
   <meta property="og:image" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/imagens/og-image.png">
   <meta name="twitter:image" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/imagens/og-image.png">
-
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Distribuição salarial — Sorocaba">
   <meta name="twitter:description" content="Análise da distribuição salarial do quadro municipal.">
@@ -24,7 +23,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
   <link rel="icon" href="imagens/favicon.ico">
-  <link rel="stylesheet" href="assets/style.css?v=5">
+  <link rel="stylesheet" href="assets/style.css?v=6">
 
   <script>
     document.documentElement.classList.remove("no-js");
@@ -115,23 +114,28 @@
       </p>
     </section>
 
+    <!-- Aviso metodológico inicial — blindagem principal -->
     <section class="secao" id="disclaimer">
       <div class="aviso-metodologico" style="font-size: 0.9rem; line-height: 1.6;">
-        <strong>Como ler estes números.</strong>
-        Consideramos <strong>apenas registros de Pagamento Mensal com valor bruto maior que zero</strong>.
-        Adiantamentos, férias, 13º salário e rescisões são <strong>excluídos</strong>, porque inflariam
-        artificialmente a cauda dos meses com eventos de pagamento em massa.
-        <br><br>
-        O <strong>índice de Gini</strong> mede a desigualdade interna: 0 significa folha perfeitamente
-        igualitária, 1 significa concentração total em uma pessoa. Valores entre <strong>0,35 e 0,55</strong>
-        são típicos de folhas municipais brasileiras.
-        <br><br>
-        <strong>Limitação:</strong> se o portal da transparência publica o valor bruto já abatido do
-        teto constitucional, o Gini pode <strong>subestimar</strong> a desigualdade no topo. Esta é uma
-        limitação da fonte, não do cálculo.
+        <p style="margin-bottom: 0.75rem;">
+          <strong>Como ler estes números.</strong> Consideramos <strong>apenas registros de Pagamento Mensal com valor bruto maior que zero</strong>.
+          Adiantamentos, férias, 13º salário e rescisões são <strong>excluídos</strong>, porque inflariam
+          artificialmente a cauda dos meses com eventos de pagamento em massa.
+        </p>
+        <p style="margin-bottom: 0.75rem;">
+          O <strong>índice de Gini</strong> mede a desigualdade interna da folha: 0 significa distribuição
+          perfeitamente igualitária, 1 significa concentração total em uma pessoa. Valores entre
+          <strong>0,35 e 0,55</strong> são típicos de folhas municipais brasileiras.
+        </p>
+        <p>
+          <strong>Limitação:</strong> se o portal da transparência publica o valor bruto já abatido do
+          teto constitucional, o Gini pode <strong>subestimar</strong> a desigualdade no topo. Esta é uma
+          limitação da fonte, não do cálculo.
+        </p>
       </div>
     </section>
 
+    <!-- Panorama do último mês -->
     <section class="secao" id="panorama">
       <h2 class="secao-titulo">Panorama do último mês</h2>
 
@@ -149,6 +153,7 @@
       </div>
     </section>
 
+    <!-- Evolução dos percentis -->
     <section class="secao" id="evolucao-percentis">
       <h2 class="secao-titulo">Evolução dos percentis</h2>
       <div class="cartao">
@@ -165,6 +170,7 @@
       </div>
     </section>
 
+    <!-- Evolução do Gini — aviso blindado -->
     <section class="secao" id="evolucao-gini">
       <h2 class="secao-titulo">Evolução do índice de Gini</h2>
       <div class="cartao">
@@ -172,22 +178,16 @@
         <div class="grafico-container" style="height: 320px;">
           <canvas id="grafico-gini" aria-label="Gráfico de linhas mostrando a evolução do índice de Gini da folha recorrente ao longo dos meses"></canvas>
         </div>
+
         <div class="aviso-metodologico">
-          <p style="margin-bottom: 0.5rem;">
-            Quanto maior o Gini, mais concentrada é a folha em poucos servidores.
-          </p>
-          <p>
-            A série do índice de Gini apresenta <strong>picos recorrentes em janeiro</strong>.
-            Isso ocorre porque a análise considera apenas a rubrica Pagamento Mensal.
-            Em janeiro, muitos servidores estão em gozo de férias ou recebem complementações
-            residuais, criando uma massa de valores muito baixos nessa rubrica. Esse efeito
-            eleva artificialmente a desigualdade medida pelo Gini naquele mês, sem indicar
-            piora estrutural da distribuição salarial.
-          </p>
+          <p><strong>Filtro de rubrica:</strong> esta análise considera exclusivamente a rubrica <strong>"Pagamento Mensal"</strong>. Adiantamentos, férias, licenças-prêmio indenizadas e rescisões são excluídos para evitar que eventos pontuais distorçam a estrutura salarial real do quadro.</p>
+          <p><strong>O "efeito janeiro" no Gini:</strong> o índice costuma apresentar picos de desigualdade em janeiro. Isso ocorre porque servidores em gozo de férias não recebem na rubrica "Pagamento Mensal" neste mês, o que artificialmente aumenta a distância entre quem recebeu e quem não recebeu, sem indicar piora estrutural.</p>
+          <p><strong>Teto remuneratório:</strong> a cauda superior da distribuição (acima de R$ 30 mil) pode aparecer "comprimida" devido ao teto constitucional, que limita o valor máximo pago a um único servidor, independentemente de acumulação de cargos.</p>
         </div>
       </div>
     </section>
 
+    <!-- Histograma -->
     <section class="secao" id="histograma">
       <h2 class="secao-titulo">Distribuição por faixa salarial</h2>
       <div class="cartao">
@@ -196,12 +196,13 @@
           <canvas id="grafico-histograma" aria-label="Gráfico de barras verticais mostrando quantos servidores estão em cada faixa de remuneração mensal no último mês"></canvas>
         </div>
         <div class="aviso-metodologico">
-          Faixas em reais. Exclui valores iguais a zero (ex: Prefeito, cuja remuneração
-          é registrada à parte). As barras não se sobrepõem.
+          <p>Faixas em reais, com base na rubrica Pagamento Mensal. A última faixa ("Acima de R$ 30 mil") agrega os valores no topo da distribuição — que já refletem o efeito do teto constitucional.</p>
+          <p>Exclui valores iguais a zero (ex.: Prefeito, cuja remuneração é registrada à parte). As barras não se sobrepõem: cada servidor aparece em uma única faixa.</p>
         </div>
       </div>
     </section>
 
+    <!-- Remuneração por perfil -->
     <section class="secao" id="remuneracao-perfil">
       <h2 class="secao-titulo">Remuneração por perfil</h2>
       <div class="aviso-metodologico" style="font-size: 0.9rem; line-height: 1.6;">
@@ -259,6 +260,7 @@
       </div>
     </section>
 
+    <!-- Série detalhada de percentis -->
     <section class="secao" id="tabela-percentis">
       <h2 class="secao-titulo">Série detalhada de percentis</h2>
       <div class="cartao">
@@ -288,6 +290,7 @@
       </div>
     </section>
 
+    <!-- Selo de auditoria -->
     <section class="secao" id="selo">
       <h2 class="secao-titulo">Selo de auditoria</h2>
       <dl class="selo" id="selo-conteudo">
@@ -342,14 +345,15 @@
 
   <noscript>
     <div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;">
-      <strong>Este painel usa JavaScript para carregar os arquivos CSV/JSON e renderizar gráficos.</strong>
-      Sem JavaScript, os dados brutos continuam disponíveis na pasta <a href="dados/">dados/</a>.
+      <strong>Este painel usa JavaScript para carregar os dados e renderizar gráficos.</strong>
+      Sem JavaScript, os dados brutos continuam disponíveis na pasta
+      <a href="dados/excel/">dados/excel/</a> (formato XLSX).
     </div>
   </noscript>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
-  <script src="assets/app.js?v=5" defer></script>
-  <script src="assets/pagina_salarios.js?v=5" defer></script>
+  <script src="assets/app.js?v=6" defer></script>
+  <script src="assets/pagina_salarios.js?v=6" defer></script>
 </body>
 </html>

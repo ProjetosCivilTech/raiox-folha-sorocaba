@@ -16,7 +16,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
 <link rel="icon" href="imagens/favicon.ico">
-<link rel="stylesheet" href="assets/style.css?v=5">
+<link rel="stylesheet" href="assets/style.css?v=6">
 </head>
 <body>
 <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
@@ -127,6 +127,7 @@
       <div class="cartao">
         <div class="tabela-wrap">
           <table id="tabela-escolaridade">
+            <caption>Distribuição de servidores por nível de instrução, ordenada pela hierarquia educacional.</caption>
             <thead>
               <tr>
                 <th scope="col">Nível de instrução</th>
@@ -147,6 +148,12 @@
   <section class="secao">
     <h2 class="secao-titulo">Distribuição por tempo de casa</h2>
     <p id="narrativa-tempo" class="aviso-metodologico"></p>
+
+    <!-- Aviso metodológico — tempo de casa -->
+    <div class="aviso-metodologico" style="margin-bottom: 1rem;">
+      <p><strong>Tempo de casa:</strong> refere-se estritamente ao tempo de vínculo com a <strong>Prefeitura de Sorocaba</strong>. Não inclui averbações de tempo de serviço em outros municípios, estados ou na iniciativa privada, mesmo que esses tempos contem para aposentadoria do servidor. O dado é calculado com base na data de admissão constante no Portal da Transparência.</p>
+    </div>
+
     <div class="grade-2">
       <div class="cartao">
         <div class="grafico-container baixo">
@@ -156,6 +163,7 @@
       <div class="cartao">
         <div class="tabela-wrap">
           <table id="tabela-tempo">
+            <caption>Distribuição de servidores por faixa de tempo de casa na Prefeitura.</caption>
             <thead>
               <tr>
                 <th scope="col">Faixa</th>
@@ -203,6 +211,11 @@
       estágios, inativos).
     </p>
 
+    <!-- Aviso metodológico — unidades físicas -->
+    <div class="aviso-metodologico" style="margin-bottom: 1rem;">
+      <p><strong>Unidades físicas:</strong> a análise por local de trabalho agrupa servidores pela lotação física (escolas, UBS, sedes). Servidores com lotação genérica (ex.: "Gabinete do Prefeito") ou em trânsito são classificados como "Não mapeado" para preservar a integridade geográfica dos dados.</p>
+    </div>
+
     <div class="grade-4">
       <div class="kpi">
         <div class="rotulo">Unidades físicas</div>
@@ -222,7 +235,7 @@
       </div>
     </div>
 
-    <!-- Gráficos por tipo de unidade (efetivo + folha) -->
+    <!-- Gráficos por tipo -->
     <div class="grade-2" style="margin-top: 1.5rem;">
       <div class="cartao">
         <h3 class="cartao-titulo">Efetivo por tipo de unidade</h3>
@@ -238,11 +251,12 @@
       </div>
     </div>
 
-    <!-- Tabela agregada por tipo -->
+    <!-- Tabela por tipo -->
     <div class="cartao" style="margin-top: 1.5rem;">
       <h3 class="cartao-titulo">Resumo por tipo de unidade</h3>
       <div class="tabela-wrap">
         <table id="tabela-unidade-tipo">
+          <caption>Resumo agregado por tipo de unidade: número de unidades, efetivo, folha total e ticket médio.</caption>
           <thead>
             <tr>
               <th scope="col">Tipo</th>
@@ -264,6 +278,7 @@
       <h3 class="cartao-titulo">Top 20 unidades físicas por efetivo</h3>
       <div class="tabela-wrap">
         <table id="tabela-unidade-top20">
+          <caption>As 20 maiores unidades físicas em número de servidores lotados.</caption>
           <thead>
             <tr>
               <th scope="col">Unidade</th>
@@ -287,7 +302,7 @@
     <p>
       <strong id="total-unidades">0</strong> unidades municipais por tipo, com efetivo
       e folha. Cada nome é canonizado pelo
-      <a href="dados/local_map.csv"><code>local_map.csv</code></a>. Use os filtros
+      <a href="dados/excel/local_map.xlsx"><code>local_map.xlsx</code></a>. Use os filtros
       para explorar todas as unidades.
     </p>
 
@@ -318,12 +333,12 @@
       Exibindo <strong id="contador-unidades-filtradas">0</strong> unidades.
     </p>
 
-    <!-- Container dos cards Top N por tipo (preenchido por JS) -->
     <div id="top-unidades-container"></div>
 
     <div class="cartao">
       <div class="tabela-wrap">
         <table id="tabela-unidades">
+          <caption>Lista completa de unidades municipais com efetivo, folha total, folha média e ticket médio.</caption>
           <thead>
             <tr>
               <th scope="col">Tipo</th>
@@ -374,8 +389,8 @@
     </div>
     <div>
       <h3>Dados abertos</h3>
-      <p><a href="sobre.html#dados-abertos">Ver todos os CSVs</a></p>
-      <p><a href="dados/excel/">Pasta Excel (.xlsx)</a></p>
+      <p><a href="sobre.html#dados-abertos">Ver todos os arquivos XLSX</a></p>
+      <p><a href="dados/excel/">Abrir pasta dados/excel/</a></p>
     </div>
     <div>
       <h3>Contato</h3>
@@ -391,14 +406,15 @@
 
 <noscript>
   <div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;">
-    <strong>Este painel usa JavaScript para carregar os arquivos CSV/JSON e renderizar gráficos.</strong>
-    Sem JavaScript, os dados brutos continuam disponíveis na pasta <a href="dados/">dados/</a>.
+    <strong>Este painel usa JavaScript para carregar os dados e renderizar gráficos.</strong>
+    Sem JavaScript, os dados brutos continuam disponíveis na pasta
+    <a href="dados/excel/">dados/excel/</a> (formato XLSX).
   </div>
 </noscript>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
-<script src="assets/app.js?v=5" defer></script>
-<script src="assets/pagina_quadro.js?v=5" defer></script>
+<script src="assets/app.js?v=6" defer></script>
+<script src="assets/pagina_quadro.js?v=6" defer></script>
 </body>
 </html>
