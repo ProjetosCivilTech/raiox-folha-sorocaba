@@ -1,21 +1,17 @@
 /* =========================================================================
 Pagina Perfil das Unidades — Raio-X do Quadro de Pessoal
-v5
+v7
 
-Compatível com:
-  - quadro.html (cabeçalho unificado, IDs atualizados)
-  - app.js v5 (helpers fmtBRL, fmtNum, graficoBarras, etc.)
-
-Cobre:
-  - Escolaridade e tempo de casa (com filtros de ano/secretaria)
-  - Escolaridade × categoria
-  - Gênero × escolaridade
-  - Unidades municipais por tipo (KPIs + gráficos + tabelas)
-  - Unidades nominais com filtros e Top N por tipo
-  - Selo de auditoria
+Mudanças v7:
+  - Filtro de tipo de unidade normalizado (tolera maiúsculas/minúsculas e
+    variações de grafia: "Escola", "escola", "Escola Municipal", etc.).
+  - Tabela #tabela-unidades limitada a 10 linhas visíveis, com aviso de
+    "Exibindo X de Y" e sugestão de uso dos filtros.
+  - Ordenação de escolaridade normalizada (caixa + acentos).
+  - Aviso metodológico no tempo de casa quando há filtro por secretaria.
 ========================================================================= */
 
-const ORDEM_ESCOLARIDADE = [
+const ORDEM_ESCOLARIDADE_REF = [
   "Sem escolaridade formal registrada",
   "Fundamental incompleto",
   "Fundamental completo",
@@ -27,6 +23,33 @@ const ORDEM_ESCOLARIDADE = [
   "Mestrado",
   "Doutorado",
 ];
+
+const normalizarEsc = (s) =>
+  String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[-_]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const ORDEM_NORMALIZADA = ORDEM_ESCOLARIDADE_REF.map(normalizarEsc);
+
+function indiceEscolaridade(nome) {
+  const idx = ORDEM_NORMALIZADA.indexOf(normalizarEsc(nome));
+  return idx === -1 ? 999 : idx;
+}
+
+/* Normalização para comparação de tipo de unidade */
+function normalizarTipo(s) {
+  return String(s || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[-_]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 const ROTULOS_TEMPO = {
   0: "0-5 anos",
@@ -53,6 +76,7 @@ const CORES_TIPO_UNIDADE = {
 };
 
 const TOP_UNIDADES = 10;
+const LIMITE_TABELA_UNIDADES = 10;
 
 const estadoQuadro = {
   escolaridade: [],
@@ -72,7 +96,6 @@ const estadoQuadro = {
 
 const num = (v) => (v === null || v === undefined || v === "" ? 0 : Number(v));
 
-/* Helper local: escapar strings que vão para o HTML */
 function escaparHTML(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;")
@@ -82,9 +105,6 @@ function escaparHTML(s) {
     .replace(/'/g, "&#39;");
 }
 
-/* -------------------------------------------------------------------------
-Inicialização
-------------------------------------------------------------------------- */
 async function inicializar() {
   try {
     const [
@@ -117,7 +137,6 @@ async function inicializar() {
       carregarJSON("dados/auditoria.json"),
     ]);
 
-    // Normalização numérica
     const camposNumEsc = ["num_registros", "num_matriculas", "folha_total", "folha_media", "folha_mediana"];
     const camposNumTempo = ["num_registros", "num_matriculas", "folha_total", "folha_media"];
 
@@ -158,7 +177,6 @@ async function inicializar() {
       r.ticket_medio = num(r.ticket_medio);
     });
 
-    // Estado
     estadoQuadro.escolaridade = escolaridade;
     estadoQuadro.escolaridadeAno = escolaridadeAno;
     estadoQuadro.escolaridadeCategoria = escolaridadeCategoria;
@@ -172,7 +190,6 @@ async function inicializar() {
     estadoQuadro.unidadeDetalhe = unidadeDetalhe;
     estadoQuadro.kpis = kpis;
 
-    // Renderização
     renderizarCabecalhoPeriodo(kpis);
     popularFiltros(escolaridadeAno, tempoServicoAno, resumoSecretaria);
     renderizarTudo("todos", "todas");
@@ -192,9 +209,6 @@ async function inicializar() {
   }
 }
 
-/* -------------------------------------------------------------------------
-Cabeçalho de período
-------------------------------------------------------------------------- */
 function renderizarCabecalhoPeriodo(kpis) {
   const el = document.getElementById("cabecalho-periodo");
   if (!el || !kpis) return;
@@ -202,9 +216,6 @@ function renderizarCabecalhoPeriodo(kpis) {
   el.innerHTML = `<strong>Período:</strong> ${p.inicio || "-"} a ${p.fim || "-"} &nbsp;·&nbsp; <strong>${p.meses_cobertos || 0} meses</strong>`;
 }
 
-/* -------------------------------------------------------------------------
-Filtros e eventos
-------------------------------------------------------------------------- */
 function popularFiltros(escolaridadeAno, tempoServicoAno, resumoSecretaria) {
   const anos = new Set([
     ...escolaridadeAno.map((r) => r.ano),
@@ -258,6 +269,8 @@ function renderizarTudo(ano, secretaria) {
   renderizarBlocoTempo(filtrarTempo(ano, secretaria));
   renderizarBlocoEscolaridadeCategoria();
   renderizarBlocoGeneroEscolaridade();
+
+  atualizarAvisoTempoSecretaria(secretaria);
 }
 
 function filtrarEscolaridade(ano, secretaria) {
@@ -280,15 +293,36 @@ function filtrarTempo(ano, secretaria) {
   return estadoQuadro.tempoServico;
 }
 
-/* -------------------------------------------------------------------------
-Bloco: Escolaridade
-------------------------------------------------------------------------- */
+function atualizarAvisoTempoSecretaria(secretaria) {
+  const ctx = document.getElementById("grafico-tempo-contagem");
+  if (!ctx) return;
+  const cartao = ctx.closest(".cartao");
+  if (!cartao) return;
+
+  let aviso = cartao.querySelector(".aviso-tempo-secretaria");
+
+  if (secretaria && secretaria !== "todas") {
+    if (!aviso) {
+      aviso = document.createElement("div");
+      aviso.className = "aviso-metodologico aviso-tempo-secretaria";
+      aviso.style.marginTop = "0.75rem";
+      cartao.appendChild(aviso);
+    }
+    aviso.innerHTML =
+      `<strong>Atenção:</strong> o filtro por secretaria se aplica ao nível de instrução. ` +
+      `A distribuição por tempo de casa continua sendo municipal, pois o agregado ` +
+      `específico por secretaria ainda está em desenvolvimento.`;
+  } else if (aviso) {
+    aviso.remove();
+  }
+}
+
 function renderizarBlocoEscolaridade(dados) {
   if (!dados.length) return;
 
   const ordenado = [...dados].sort((a, b) =>
-    ORDEM_ESCOLARIDADE.indexOf(a.escolaridade_canonica) -
-    ORDEM_ESCOLARIDADE.indexOf(b.escolaridade_canonica)
+    indiceEscolaridade(a.escolaridade_canonica) -
+    indiceEscolaridade(b.escolaridade_canonica)
   );
   const total = ordenado.reduce((s, d) => s + d.num_matriculas, 0);
 
@@ -330,9 +364,6 @@ function renderizarBlocoEscolaridade(dados) {
   }
 }
 
-/* -------------------------------------------------------------------------
-Bloco: Tempo de casa
-------------------------------------------------------------------------- */
 function renderizarBlocoTempo(dados) {
   if (!dados.length) return;
 
@@ -376,9 +407,6 @@ function renderizarBlocoTempo(dados) {
   }
 }
 
-/* -------------------------------------------------------------------------
-Bloco: Escolaridade × Categoria
-------------------------------------------------------------------------- */
 function renderizarBlocoEscolaridadeCategoria() {
   const dados = estadoQuadro.escolaridadeCategoria;
   const ctx = document.getElementById("grafico-escolaridade-categoria");
@@ -387,7 +415,7 @@ function renderizarBlocoEscolaridadeCategoria() {
   if (estadoQuadro.graficos.escCategoria) estadoQuadro.graficos.escCategoria.destroy();
 
   const escolaridades = [...new Set(dados.map((d) => d.escolaridade_canonica))]
-    .sort((a, b) => ORDEM_ESCOLARIDADE.indexOf(a) - ORDEM_ESCOLARIDADE.indexOf(b));
+    .sort((a, b) => indiceEscolaridade(a) - indiceEscolaridade(b));
   const subgrupos = [...new Set(dados.map((d) => d.regime_subgrupo))];
 
   const datasets = subgrupos.map((sg) => {
@@ -454,16 +482,13 @@ function renderizarBlocoEscolaridadeCategoria() {
   }
 }
 
-/* -------------------------------------------------------------------------
-Bloco: Gênero × Escolaridade
-------------------------------------------------------------------------- */
 function renderizarBlocoGeneroEscolaridade() {
   const dados = estadoQuadro.generoEscolaridade;
   const ctx = document.getElementById("grafico-genero-escolaridade");
   if (!ctx || !dados || !dados.length) return;
 
   const escolaridades = [...new Set(dados.map((d) => d.escolaridade_canonica))]
-    .sort((a, b) => ORDEM_ESCOLARIDADE.indexOf(a) - ORDEM_ESCOLARIDADE.indexOf(b));
+    .sort((a, b) => indiceEscolaridade(a) - indiceEscolaridade(b));
 
   const fem = escolaridades.map((esc) => {
     const r = dados.find((d) => d.escolaridade_canonica === esc && d.genero_inferido === "feminino");
@@ -512,7 +537,7 @@ function renderizarBlocoGeneroEscolaridade() {
 }
 
 /* -------------------------------------------------------------------------
-Bloco: Unidades municipais (tipo, top 20)
+Unidades por tipo — KPIs, gráficos e tabelas agregadas
 ------------------------------------------------------------------------- */
 function renderizarUnidades(unidadeTipo, unidadeTop20) {
   if (unidadeTipo && unidadeTipo.length) {
@@ -552,7 +577,6 @@ function renderizarGraficosUnidades(dados) {
   const folha = filtrado.map((d) => d.folha_total);
   const cores = filtrado.map((d) => CORES_TIPO_UNIDADE[d.tipo_unidade]);
 
-  // Gráfico 1: Efetivo por tipo
   const ctx1 = document.getElementById("grafico-unidade-tipo");
   if (ctx1) {
     if (estadoQuadro.graficos.unidEfetivo) estadoQuadro.graficos.unidEfetivo.destroy();
@@ -592,7 +616,6 @@ function renderizarGraficosUnidades(dados) {
     });
   }
 
-  // Gráfico 2: Folha total por tipo
   const ctx2 = document.getElementById("grafico-unidade-folha");
   if (ctx2) {
     if (estadoQuadro.graficos.unidFolha) estadoQuadro.graficos.unidFolha.destroy();
@@ -681,7 +704,7 @@ function renderizarTabelaUnidadeTop20(dados) {
 }
 
 /* -------------------------------------------------------------------------
-Bloco: Unidades nominais (drill-down + filtros)
+Unidades nominais — drill-down + filtros
 ------------------------------------------------------------------------- */
 function renderizarUnidadesNominais(dados) {
   if (!dados || !dados.length) return;
@@ -714,14 +737,25 @@ function renderizarTopUnidades(dados, filtroTipo = "") {
   }
 
   container.innerHTML = tiposFiltrados.map(({ chave, rotulo }) => {
+    const chaveNorm = normalizarTipo(chave);
     const subset = dados
-      .filter((d) => d.tipo === chave)
+      .filter((d) => {
+        const tipoNorm = normalizarTipo(d.tipo);
+        return tipoNorm === chaveNorm ||
+               tipoNorm.includes(chaveNorm) ||
+               chaveNorm.includes(tipoNorm);
+      })
       .sort((a, b) => b.efetivo - a.efetivo)
       .slice(0, TOP_UNIDADES);
 
     if (!subset.length) return "";
 
-    const total = dados.filter((d) => d.tipo === chave).length;
+    const total = dados.filter((d) => {
+      const tipoNorm = normalizarTipo(d.tipo);
+      return tipoNorm === chaveNorm ||
+             tipoNorm.includes(chaveNorm) ||
+             chaveNorm.includes(tipoNorm);
+    }).length;
 
     return `<div style="margin-bottom: 2rem;">
       <h3 style="font-size: 1rem; color: var(--azul-escuro); margin-bottom: 0.75rem;">
@@ -748,6 +782,10 @@ function renderizarTopUnidades(dados, filtroTipo = "") {
   }).join("");
 }
 
+/* -------------------------------------------------------------------------
+Tabela de unidades nominais — v7
+Filtro normalizado + limite de 10 linhas visíveis.
+------------------------------------------------------------------------- */
 function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
   const tbody = document.querySelector("#tabela-unidades tbody");
   const elContador = document.getElementById("contador-unidades-filtradas");
@@ -755,9 +793,18 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
 
   let filtrado = dados;
 
+  // Filtro por tipo normalizado
   if (filtroTipo) {
-    filtrado = filtrado.filter((d) => d.tipo === filtroTipo);
+    const filtroNorm = normalizarTipo(filtroTipo);
+    filtrado = filtrado.filter((d) => {
+      const tipoNorm = normalizarTipo(d.tipo);
+      return tipoNorm === filtroNorm ||
+             tipoNorm.includes(filtroNorm) ||
+             filtroNorm.includes(tipoNorm);
+    });
   }
+
+  // Busca por texto
   if (termoBusca) {
     const t = termoBusca.toLowerCase();
     filtrado = filtrado.filter((d) =>
@@ -766,19 +813,24 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
     );
   }
 
+  // Ordenação
   filtrado = [...filtrado].sort((a, b) => {
     if (a.tipo !== b.tipo) return String(a.tipo).localeCompare(String(b.tipo));
     return b.efetivo - a.efetivo;
   });
 
-  if (elContador) elContador.textContent = filtrado.length;
+  const totalFiltrado = filtrado.length;
+  if (elContador) elContador.textContent = totalFiltrado;
 
-  if (!filtrado.length) {
+  if (!totalFiltrado) {
     tbody.innerHTML = `<tr><td colspan="6" class="carregando">Nenhuma unidade encontrada.</td></tr>`;
     return;
   }
 
-  tbody.innerHTML = filtrado.map((u) => `<tr>
+  // Limita visualmente a 10 linhas
+  const visiveis = filtrado.slice(0, LIMITE_TABELA_UNIDADES);
+
+  const linhasHTML = visiveis.map((u) => `<tr>
     <td>${escaparHTML(u.tipo)}</td>
     <td>${escaparHTML(u.local_canonico)}</td>
     <td class="numerico">${fmtNum.format(u.efetivo)}</td>
@@ -786,6 +838,17 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
     <td class="numerico">${fmtBRL.format(u.folha_media)}</td>
     <td class="numerico">${fmtBRL.format(u.ticket_medio)}</td>
   </tr>`).join("");
+
+  const avisoRodape = totalFiltrado > LIMITE_TABELA_UNIDADES
+    ? `<tr>
+        <td colspan="6" style="text-align:center; font-style:italic; color:var(--cinza-texto); padding:1rem; background:var(--cinza-50);">
+          Exibindo ${LIMITE_TABELA_UNIDADES} de ${fmtNum.format(totalFiltrado)} unidades.
+          Use os filtros acima ou a busca para refinar.
+        </td>
+      </tr>`
+    : "";
+
+  tbody.innerHTML = linhasHTML + avisoRodape;
 }
 
 function configurarFiltrosUnidades(dados) {
@@ -811,7 +874,4 @@ function configurarFiltrosUnidades(dados) {
   }
 }
 
-/* -------------------------------------------------------------------------
-Bootstrap
-------------------------------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", inicializar);

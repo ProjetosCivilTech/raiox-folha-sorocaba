@@ -1,24 +1,16 @@
 /* =========================================================================
 Pagina Secretarias — Raio-X do Quadro de Pessoal da Prefeitura de Sorocaba
-v5
+v7
+
+Mudança v7: o aviso metodológico do gráfico de composição é anexado
+ao .cartao (fora do .grafico-container). Isso evita que o Chart.js infle
+a altura do canvas quando há tabela alta ao lado.
 
 Modos de operação:
-  "municipio"   (padrão ao abrir): total do município, soma de todas as
-                secretarias. KPIs e gráficos gerais + anatomia agregada.
-  "secretaria"  (após seleção): recorte por secretaria específica, incluindo
-                anatomia interna detalhada.
-
-Correções v5:
-  - renderizarCabecalhoPeriodo preenche #cabecalho-periodo E #periodo-texto
-  - todas as leituras numéricas passam por num() (NaN-safe)
-  - guarda para estado.folhaMunicipalMes vazio
-  - removidas funções de layout que não surtiam efeito (expandirGrade)
-  - títulos de cartão mostram contexto correto
+  "municipio"   (padrão ao abrir): total do município.
+  "secretaria"  (após seleção): recorte por secretaria específica.
 ========================================================================= */
 
-/* -------------------------------------------------------------------------
-Helpers locais
-------------------------------------------------------------------------- */
 function escaparHTML(s) {
   return String(s)
     .replace(/&/g, "&amp;")
@@ -50,9 +42,6 @@ function mediana(valores) {
   return arr.length % 2 !== 0 ? arr[mid] : (arr[mid - 1] + arr[mid]) / 2;
 }
 
-/* -------------------------------------------------------------------------
-Estado
-------------------------------------------------------------------------- */
 const estado = {
   resumo: [],
   folhaMes: [],
@@ -164,7 +153,6 @@ async function inicializar() {
     renderizarSelo(auditoria);
     registrarEventos();
 
-    // URL pode trazer ?secretaria=... (link direto)
     const params = new URLSearchParams(location.search);
     const secInicial = params.get("secretaria");
 
@@ -187,9 +175,6 @@ async function inicializar() {
   }
 }
 
-/* -------------------------------------------------------------------------
-Cabeçalho e período
-------------------------------------------------------------------------- */
 function renderizarCabecalhoPeriodo(kpis) {
   if (!kpis) return;
   const p = kpis.periodo || {};
@@ -208,9 +193,6 @@ function renderizarCabecalhoPeriodo(kpis) {
   }
 }
 
-/* -------------------------------------------------------------------------
-Seletor de secretarias
-------------------------------------------------------------------------- */
 function popularSeletorSecretarias(resumo) {
   const sel = document.getElementById("seletor-secretaria");
   if (!sel) return;
@@ -224,9 +206,6 @@ function popularSeletorSecretarias(resumo) {
   });
 }
 
-/* -------------------------------------------------------------------------
-Eventos
-------------------------------------------------------------------------- */
 function registrarEventos() {
   const sel = document.getElementById("seletor-secretaria");
   const selMetrica = document.getElementById("seletor-metrica");
@@ -266,9 +245,6 @@ function registrarEventos() {
   }
 }
 
-/* -------------------------------------------------------------------------
-Modo: Total do município
-------------------------------------------------------------------------- */
 function selecionarMunicipio() {
   estado.modo = "municipio";
   estado.secretariaAtual = null;
@@ -290,7 +266,6 @@ function selecionarMunicipio() {
   renderizarGraficoCategoria(estado.categoriaMunicipalMes, "municipio");
   renderizarTabela(folha);
 
-  // Esconde comparadores (não fazem sentido no modo município)
   const comparadores = document.getElementById("comparadores");
   if (comparadores) {
     const cartao = comparadores.closest(".cartao");
@@ -300,9 +275,6 @@ function selecionarMunicipio() {
   renderizarAnatomia(null);
 }
 
-/* -------------------------------------------------------------------------
-KPIs do município
-------------------------------------------------------------------------- */
 function renderizarKPIsMunicipio(kpis) {
   const el = document.getElementById("kpis-secretaria");
   if (!el || !kpis) return;
@@ -345,14 +317,10 @@ function renderizarKPIsMunicipio(kpis) {
   `;
 }
 
-/* -------------------------------------------------------------------------
-Modo: Secretaria específica
-------------------------------------------------------------------------- */
 function selecionarSecretaria(nome) {
   estado.modo = "secretaria";
   estado.secretariaAtual = nome;
 
-  // Mostra comparadores
   const comparadores = document.getElementById("comparadores");
   if (comparadores) {
     const cartao = comparadores.closest(".cartao");
@@ -386,9 +354,6 @@ function selecionarSecretaria(nome) {
   renderizarAnatomia(nome);
 }
 
-/* -------------------------------------------------------------------------
-KPIs da secretaria
-------------------------------------------------------------------------- */
 function renderizarKPIs(resumo) {
   const el = document.getElementById("kpis-secretaria");
   if (!el || !resumo) return;
@@ -443,9 +408,6 @@ function renderizarKPIs(resumo) {
   `;
 }
 
-/* -------------------------------------------------------------------------
-Gráfico de métrica (folha / efetivo / ticket)
-------------------------------------------------------------------------- */
 function renderizarGraficoMetrica() {
   const ctx = document.getElementById("grafico-folha");
   if (!ctx) return;
@@ -510,9 +472,6 @@ function renderizarGraficoMetrica() {
   }
 }
 
-/* -------------------------------------------------------------------------
-Gráfico de efetivo
-------------------------------------------------------------------------- */
 function renderizarGraficoEfetivo(dados, contexto) {
   const ctx = document.getElementById("grafico-efetivo");
   if (!ctx || !dados || !dados.length) return;
@@ -533,23 +492,25 @@ function renderizarGraficoEfetivo(dados, contexto) {
 }
 
 /* -------------------------------------------------------------------------
-Composição por categoria — rosca
+Gráfico de composição por categoria — CORRIGIDO v7
+O aviso metodológico agora é anexado ao .cartao (fora do .grafico-container),
+evitando que o Chart.js infle a altura do canvas.
 ------------------------------------------------------------------------- */
 function renderizarGraficoCategoria(dados, contexto) {
   const ctx = document.getElementById("grafico-categoria");
   if (!ctx) return;
 
-  const container = ctx.parentElement;
-  if (!container) return;
+  const cartao = ctx.closest(".cartao");
+  if (!cartao) return;
 
-  let aviso = container.querySelector(".aviso-metodologico.categoria-aviso");
+  let aviso = cartao.querySelector(".aviso-metodologico.categoria-aviso");
 
   function garantirAviso() {
     if (!aviso) {
       aviso = document.createElement("div");
       aviso.className = "aviso-metodologico categoria-aviso";
       aviso.style.marginTop = "1rem";
-      container.appendChild(aviso);
+      cartao.appendChild(aviso);
     }
     return aviso;
   }
@@ -585,13 +546,10 @@ function renderizarGraficoCategoria(dados, contexto) {
 
   estado.graficos.categoria = graficoRosca(ctx, labels, valores, cores);
 
-  const cartao = ctx.closest(".cartao");
-  if (cartao) {
-    const titulo = cartao.querySelector(".cartao-titulo");
-    if (titulo) {
-      const mesRef = rotuloPeriodo(ultima.ano, ultima.mes);
-      titulo.textContent = `Composição por categoria — ${contexto} · ${mesRef}`;
-    }
+  const titulo = cartao.querySelector(".cartao-titulo");
+  if (titulo) {
+    const mesRef = rotuloPeriodo(ultima.ano, ultima.mes);
+    titulo.textContent = `Composição por categoria — ${contexto} · ${mesRef}`;
   }
 
   const contextoLabel = contexto === "municipio" ? "Total do município" : contexto;
@@ -599,9 +557,6 @@ function renderizarGraficoCategoria(dados, contexto) {
     `Composição da folha de <strong>${rotuloPeriodo(ultima.ano, ultima.mes)}</strong> — ${escaparHTML(contextoLabel)}.`;
 }
 
-/* -------------------------------------------------------------------------
-Comparadores vs mediana municipal
-------------------------------------------------------------------------- */
 function renderizarComparadores(resumo) {
   const el = document.getElementById("comparadores");
   if (!el || !resumo) return;
@@ -657,9 +612,6 @@ function renderizarComparadores(resumo) {
   `;
 }
 
-/* -------------------------------------------------------------------------
-Tabela mensal
-------------------------------------------------------------------------- */
 function renderizarTabela(dados) {
   const tbody = document.querySelector("#tabela-mensal tbody");
   if (!tbody) return;
@@ -687,9 +639,6 @@ function renderizarTabela(dados) {
   }).join("");
 }
 
-/* -------------------------------------------------------------------------
-Anatomia da secretaria (ou município)
-------------------------------------------------------------------------- */
 function renderizarAnatomia(nomeSecretaria) {
   const usarMunicipio = !nomeSecretaria;
   const chave = usarMunicipio ? "Município (todas as secretarias)" : nomeSecretaria;
@@ -725,9 +674,6 @@ function renderizarAnatomia(nomeSecretaria) {
   }
 }
 
-/* -------------------------------------------------------------------------
-Top cargos
-------------------------------------------------------------------------- */
 function renderizarTopCargos(dados, nomeSecretaria) {
   const ctx = document.getElementById("grafico-top-cargos");
   const tbody = document.querySelector("#tabela-top-cargos tbody");
@@ -773,9 +719,6 @@ function renderizarTopCargos(dados, nomeSecretaria) {
   }
 }
 
-/* -------------------------------------------------------------------------
-Escolaridade da secretaria
-------------------------------------------------------------------------- */
 const ORDEM_ESC_SEC = [
   "Sem escolaridade formal registrada", "Fundamental incompleto", "Fundamental completo",
   "Médio incompleto", "Medio incompleto", "Médio completo", "Medio completo",
@@ -788,12 +731,8 @@ function renderizarEscolaridadeSec(dados, nomeSecretaria) {
   if (!ctx || !dados || dados.length === 0) return;
 
   const ordenado = [...dados].sort((a, b) => {
-    const ia = ORDEM_ESC_SEC.findIndex(
-      (o) => a.escolaridade_canonica.toLowerCase().includes(o.toLowerCase())
-    );
-    const ib = ORDEM_ESC_SEC.findIndex(
-      (o) => b.escolaridade_canonica.toLowerCase().includes(o.toLowerCase())
-    );
+    const ia = ORDEM_ESC_SEC.findIndex(o => a.escolaridade_canonica.toLowerCase().includes(o.toLowerCase()));
+    const ib = ORDEM_ESC_SEC.findIndex(o => b.escolaridade_canonica.toLowerCase().includes(o.toLowerCase()));
     return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
   });
 
@@ -813,13 +752,7 @@ function renderizarEscolaridadeSec(dados, nomeSecretaria) {
   );
 }
 
-/* -------------------------------------------------------------------------
-Tempo de casa
-------------------------------------------------------------------------- */
-const ORDEM_TEMPO_SEC = [
-  "0-5 anos", "6-10 anos", "11-15 anos", "16-20 anos",
-  "21-25 anos", "26-30 anos", "30+ anos",
-];
+const ORDEM_TEMPO_SEC = ["0-5 anos", "6-10 anos", "11-15 anos", "16-20 anos", "21-25 anos", "26-30 anos", "30+ anos"];
 
 function renderizarTempoSec(dados, nomeSecretaria) {
   const ctx = document.getElementById("grafico-tempo-sec");
@@ -846,9 +779,6 @@ function renderizarTempoSec(dados, nomeSecretaria) {
   );
 }
 
-/* -------------------------------------------------------------------------
-Percentis e Gini
-------------------------------------------------------------------------- */
 function renderizarPercentisSec(perc, gini, nomeSecretaria) {
   const bloco = document.getElementById("bloco-percentis-sec");
   const tbody = document.querySelector("#tabela-percentis-sec tbody");
@@ -888,9 +818,6 @@ function renderizarPercentisSec(perc, gini, nomeSecretaria) {
   `;
 }
 
-/* -------------------------------------------------------------------------
-Exportar CSV
-------------------------------------------------------------------------- */
 function exportarCSV() {
   let dados, nomeArquivo;
 
@@ -931,7 +858,4 @@ function exportarCSV() {
   URL.revokeObjectURL(url);
 }
 
-/* -------------------------------------------------------------------------
-Bootstrap
-------------------------------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", inicializar);
