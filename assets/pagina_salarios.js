@@ -1,17 +1,7 @@
 /* =========================================================================
 Pagina Salarios — Raio-X do Quadro de Pessoal da Prefeitura de Sorocaba
-v5
-
-Compatível com:
-  - salarios.html (cabeçalho unificado, IDs atualizados)
-  - app.js v5 (helpers fmtBRL, fmtNum, graficoLinha, graficoBarras, etc.)
-
-Correções mantidas:
-  - renderizarGraficoSalarioTempo: chamada sem espaço (evitava ReferenceError)
-  - Chaves das faixas salariais sem espaço (senão histograma fica VAZIO)
-  - CORES.cinzaBorda / color: sem espaços internos (evitava SyntaxError)
-
-Análise: usa apenas a rubrica Pagamento Mensal (valor recorrente da folha)
+v6 — Compatível com salarios_por_perfil.csv (colunas escolaridade_canonica
+      e faixa_tempo) + salarios.html atual + app.js v6
 ========================================================================= */
 
 const estadoSal = {
@@ -62,10 +52,39 @@ async function inicializar() {
       ["n", "folha_media", "folha_mediana"].forEach((c) => { if (c in r) r[c] = num(r[c]); });
     });
 
+    // -----------------------------------------------------------------------
+    // CORREÇÃO CRÍTICA: normalizar colunas do CSV salarios_por_perfil
+    // O CSV tem: escolaridade_canonica, faixa_tempo, n, folha_media, folha_mediana
+    // O código espera: dimensao, categoria, n, folha_media, folha_mediana
+    // -----------------------------------------------------------------------
+    const perfisNormalizados = [];
+    salariosPerfil.forEach((r) => {
+      // Escolaridade
+      if (r.escolaridade_canonica) {
+        perfisNormalizados.push({
+          dimensao: "escolaridade",
+          categoria: r.escolaridade_canonica,
+          n: num(r.n),
+          folha_media: num(r.folha_media),
+          folha_mediana: num(r.folha_mediana),
+        });
+      }
+      // Tempo de casa (faixa_tempo) — só inclui se tiver valor
+      if (r.faixa_tempo) {
+        perfisNormalizados.push({
+          dimensao: "tempo_casa",
+          categoria: r.faixa_tempo,
+          n: num(r.n),
+          folha_media: num(r.folha_media),
+          folha_mediana: num(r.folha_mediana),
+        });
+      }
+    });
+
     estadoSal.distribuicao = distribuicao.sort((a, b) => a.ano - b.ano || a.mes - b.mes);
     estadoSal.gini = gini.sort((a, b) => a.ano - b.ano || a.mes - b.mes);
     estadoSal.histograma = histograma;
-    estadoSal.salariosPerfil = salariosPerfil;
+    estadoSal.salariosPerfil = perfisNormalizados;
     estadoSal.kpis = kpis;
     estadoSal.auditoria = auditoria;
 
@@ -314,7 +333,6 @@ function renderizarHistograma() {
   const dados = estadoSal.histograma;
   if (!dados || !dados.length) return;
 
-  // Encontra o último mês (ano*100 + mes)
   const ultimo = dados.reduce((acc, d) => {
     const chave = num(d.ano) * 100 + num(d.mes);
     const accChave = acc ? num(acc.ano) * 100 + num(acc.mes) : -1;
@@ -334,9 +352,6 @@ function renderizarHistograma() {
     titulo.textContent = `Servidores por faixa de remuneração mensal — ${rotuloPeriodo(anoRef, mesRef)}`;
   }
 
-  // ATENÇÃO: as chaves abaixo precisam casar EXATAMENTE com a coluna
-  // "faixa" do CSV dados/histograma_salarial.csv. Qualquer espaço a mais
-  // faz o .find() falhar e o histograma ficar vazio.
   const ORDEM_FAIXAS = [
     "ate_2k", "2k_4k", "4k_6k", "6k_8k", "8k_10k",
     "10k_15k", "15k_20k", "20k_30k", "acima_30k",
@@ -368,18 +383,11 @@ function renderizarHistograma() {
     .map((fx) => dadosMes.find((d) => d.faixa === fx))
     .filter(Boolean);
 
-  // Caso o CSV tenha alguma faixa extra não prevista
   dadosMes.forEach((d) => {
     if (!ORDEM_FAIXAS.includes(d.faixa)) ordenadas.push(d);
   });
 
-  if (!ordenadas.length) {
-    console.warn(
-      "[salarios] Nenhuma faixa casou com ORDEM_FAIXAS. " +
-      "Verifique se a coluna 'faixa' do CSV usa os valores esperados."
-    );
-    return;
-  }
+  if (!ordenadas.length) return;
 
   const labels = ordenadas.map((d) => ROTULOS_FAIXA[d.faixa] || d.faixa);
   const valores = ordenadas.map((d) => num(d.n));
@@ -443,7 +451,7 @@ function renderizarHistograma() {
 }
 
 /* -------------------------------------------------------------------------
-Remuneração por perfil (escolaridade + tempo de casa)
+Remuneração por perfil (escolaridade + tempo de casa) — CORRIGIDO
 ------------------------------------------------------------------------- */
 function renderizarSalariosPerfil() {
   const dados = estadoSal.salariosPerfil || [];
