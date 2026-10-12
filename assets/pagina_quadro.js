@@ -1,18 +1,19 @@
 /* =========================================================================
 Pagina Perfil das Unidades — Raio-X do Quadro de Pessoal
-v8
+v9
 
-Mudanças v8:
-  - CORREÇÃO CRÍTICA: mapeamento de colunas do CSV de unidades.
-    O CSV real (dados/unidade_detalhe.csv) usa:
-      unidade_canonica;tipo_unidade;efetivo;folha_total;folha_media;ticket_medio
-    A versão anterior procurava d.tipo (não existe), d.local_canonico
-    (não existe) e d.sigla_secretaria (não existe). Por isso o filtro
-    nunca casava e os nomes das unidades apareciam como "—".
-    Agora usamos as colunas corretas, com fallbacks para nomes alternativos.
-  - Ordenação de escolaridade normalizada (caixa + acentos).
-  - Aviso metodológico no tempo de casa quando há filtro por secretaria.
-  - Filtro de tipo de unidade tolerante a variações de grafia.
+Mudanças v9:
+  - CORREÇÃO CRÍTICA: o CSV unidade_tipo.csv usa tipos granulares
+    (Escola, UBS, PA, CMAE, CAPS, Setor, Categoria, Outros) mas o código
+    procurava por macros (unidade_fisica, setor_operacional, ...).
+    Agora agregamos os tipos granulares nos macros antes de renderizar
+    KPIs, gráficos e tabela por tipo.
+
+Mudanças v8 (mantidas):
+  - Mapeamento de colunas do CSV de unidades (tipo_unidade, unidade_canonica)
+  - Ordenação de escolaridade normalizada
+  - Filtro de tipo tolerante a variações de grafia
+  - Aviso metodológico no tempo de casa quando filtra por secretaria
 ========================================================================= */
 
 const ORDEM_ESCOLARIDADE_REF = [
@@ -58,6 +59,54 @@ function normalizarTipo(s) {
 /* Acesso tolerante às colunas do CSV de unidades */
 function getTipo(u)      { return u.tipo_unidade      || u.tipo           || ""; }
 function getUnidade(u)   { return u.unidade_canonica  || u.local_canonico || u.local_trabalho || ""; }
+
+/* -------------------------------------------------------------------------
+Mapeamento de tipos granulares → macros (usado em KPIs e gráficos)
+------------------------------------------------------------------------- */
+const MAPA_TIPO_UNIDADE = {
+  // Unidades físicas
+  escola: "unidade_fisica",
+  ubs: "unidade_fisica",
+  pa: "unidade_fisica",
+  cmae: "unidade_fisica",
+  caps: "unidade_fisica",
+  // Setores operacionais
+  setor: "setor_operacional",
+  // Categorias administrativas
+  categoria: "categoria_administrativa",
+  // Outros
+  outros: "outros",
+};
+
+function macroTipo(tipoBruto) {
+  return MAPA_TIPO_UNIDADE[normalizarTipo(tipoBruto)] || "outros";
+}
+
+/**
+ * Agrupa o array de unidade_tipo (8 linhas granulares) em 4 macros.
+ * Retorna um array no formato esperado por KPIs/gráficos/tabelas.
+ */
+function agregarUnidadeTipo(dados) {
+  const buckets = {
+    unidade_fisica: { tipo_unidade: "unidade_fisica", num_unidades: 0, efetivo: 0, folha_total: 0 },
+    setor_operacional: { tipo_unidade: "setor_operacional", num_unidades: 0, efetivo: 0, folha_total: 0 },
+    categoria_administrativa: { tipo_unidade: "categoria_administrativa", num_unidades: 0, efetivo: 0, folha_total: 0 },
+    outros: { tipo_unidade: "outros", num_unidades: 0, efetivo: 0, folha_total: 0 },
+  };
+
+  dados.forEach((d) => {
+    const macro = macroTipo(getTipo(d));
+    const b = buckets[macro];
+    b.num_unidades += num(d.num_unidades);
+    b.efetivo += num(d.efetivo);
+    b.folha_total += num(d.folha_total);
+  });
+
+  return Object.values(buckets).map((b) => ({
+    ...b,
+    ticket_medio: b.efetivo > 0 ? b.folha_total / b.efetivo : 0,
+  }));
+}
 
 const ROTULOS_TEMPO = {
   0: "0-5 anos",
@@ -549,9 +598,10 @@ Unidades por tipo — KPIs, gráficos e tabelas agregadas
 ------------------------------------------------------------------------- */
 function renderizarUnidades(unidadeTipo, unidadeTop20) {
   if (unidadeTipo && unidadeTipo.length) {
-    renderizarKPIsUnidades(unidadeTipo);
-    renderizarGraficosUnidades(unidadeTipo);
-    renderizarTabelaUnidadeTipo(unidadeTipo);
+    const agregado = agregarUnidadeTipo(unidadeTipo);
+    renderizarKPIsUnidades(agregado);
+    renderizarGraficosUnidades(agregado);
+    renderizarTabelaUnidadeTipo(agregado);
   }
   if (unidadeTop20 && unidadeTop20.length) {
     renderizarTabelaUnidadeTop20(unidadeTop20);
@@ -787,10 +837,6 @@ function renderizarTopUnidades(dados, filtroTipo = "") {
   }).join("");
 }
 
-/* -------------------------------------------------------------------------
-Tabela de unidades nominais — v8
-Corrige o mapeamento de colunas e normaliza o filtro.
-------------------------------------------------------------------------- */
 function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
   const tbody = document.querySelector("#tabela-unidades tbody");
   const elContador = document.getElementById("contador-unidades-filtradas");
@@ -798,7 +844,6 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
 
   let filtrado = dados;
 
-  // Filtro por tipo normalizado (aceita variações de grafia)
   if (filtroTipo) {
     const filtroNorm = normalizarTipo(filtroTipo);
     filtrado = filtrado.filter((d) => {
@@ -809,7 +854,6 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
     });
   }
 
-  // Busca por texto
   if (termoBusca) {
     const t = termoBusca.toLowerCase();
     filtrado = filtrado.filter((d) =>
@@ -817,7 +861,6 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
     );
   }
 
-  // Ordenação
   filtrado = [...filtrado].sort((a, b) => {
     const ta = String(getTipo(a));
     const tb = String(getTipo(b));
