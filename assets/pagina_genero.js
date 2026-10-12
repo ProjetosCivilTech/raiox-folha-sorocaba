@@ -1,15 +1,21 @@
 /* =========================================================================
 Pagina Genero — Raio-X do Quadro de Pessoal da Prefeitura de Sorocaba
-v6
+v7
 
 Compatível com:
   - genero.html (cabeçalho unificado, IDs atualizados)
   - app.js v7 (helpers fmtBRL, fmtNum, graficoLinha, graficoRosca)
 
-Mudanças v6:
-  - CORREÇÃO: em renderizarCategoria, o campo folha_total agora SOMA os
-    valores de F + M. Antes usava Math.max, pegando só a fatia do gênero
-    dominante e subestimando o total real da categoria na tabela.
+Mudanças v7:
+  - CORREÇÃO: no forEach do `evolucao`, ignoramos as colunas `total` e
+    `pct_feminino` do CSV. A coluna `total` do pipeline está inflada
+    (contém algo que não está em feminino/masculino/indefinido).
+    Recalculamos a partir dos componentes para exibir o número correto
+    na tela. Exemplo: em set/2026 o CSV traz total=16.504, mas a soma
+    real é 14.469 (11.182 F + 3.115 M + 172 indef).
+  - CORREÇÃO (mantida do v6): em renderizarCategoria, o campo folha_total
+    agora SOMA os valores de F + M. Antes usava Math.max, pegando só a
+    fatia do gênero dominante.
 
 Regras de supressão mantidas:
   - gráfico gap: n>=20 por gênero
@@ -101,13 +107,21 @@ async function inicializar() {
       r.feminino = num(r.feminino);
       r.pct_feminino = num(r.pct_feminino);
     });
+
+    // -----------------------------------------------------------------------
+    // CORREÇÃO v7: recalcula total e pct_feminino da evolução mensal
+    // O CSV traz coluna `total` inflada (contém algo que não está em
+    // feminino/masculino/indefinido). Recalculamos a partir dos componentes.
+    // -----------------------------------------------------------------------
     evolucao.forEach((r) => {
       r.feminino = num(r.feminino);
       r.masculino = num(r.masculino);
       r.indefinido = num(r.indefinido);
-      r.total = num(r.total);
-      r.pct_feminino = num(r.pct_feminino);
+      // Ignoramos r.total e r.pct_feminino do CSV; recalculamos
+      r.total = r.feminino + r.masculino + r.indefinido;
+      r.pct_feminino = r.total > 0 ? (r.feminino / r.total) * 100 : 0;
     });
+
     gap.forEach((r) => {
       r.num_matriculas_feminino = num(r.num_matriculas_feminino);
       r.num_matriculas_masculino = num(r.num_matriculas_masculino);
@@ -409,7 +423,7 @@ function renderizarLideranca() {
 }
 
 /* -------------------------------------------------------------------------
-Gráfico 4 — Composição por categoria de vínculo — CORRIGIDO v6
+Gráfico 4 — Composição por categoria de vínculo — CORRIGIDO v6/v7
 Folha total agora SOMA os valores de F + M (antes usava Math.max).
 ------------------------------------------------------------------------- */
 function renderizarCategoria() {
@@ -429,7 +443,7 @@ function renderizarCategoria() {
         folha_media_masc: 0,
       };
     }
-    // CORREÇÃO v6: somar (antes: Math.max)
+    // CORREÇÃO: somar (antes: Math.max)
     agrupado[k].folha_total += num(r.folha_total);
     if (r.genero_inferido === "feminino") agrupado[k].folha_media_fem = num(r.folha_media);
     if (r.genero_inferido === "masculino") agrupado[k].folha_media_masc = num(r.folha_media);

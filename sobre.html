@@ -23,7 +23,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
   <link rel="icon" href="imagens/favicon.ico">
-  <link rel="stylesheet" href="assets/style.css?v=6">
+  <link rel="stylesheet" href="assets/style.css?v=7">
 
   <script>
     document.documentElement.classList.remove("no-js");
@@ -34,9 +34,6 @@
 
   <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
 
-  <!-- =====================================================================
-       CABEÇALHO UNIFICADO
-       ===================================================================== -->
   <header class="cabecalho">
     <div class="cabecalho-conteudo">
       <div class="cabecalho-identidade">
@@ -58,9 +55,6 @@
     </div>
   </header>
 
-  <!-- =====================================================================
-       MENU
-       ===================================================================== -->
   <nav class="menu" aria-label="Menu principal">
     <div class="menu-conteudo">
       <a href="index.html">Início</a>
@@ -73,9 +67,6 @@
     </div>
   </nav>
 
-  <!-- =====================================================================
-       DRAWER (menu lateral mobile)
-       ===================================================================== -->
   <button class="botao-lateral" aria-label="Abrir menu lateral" title="Menu lateral">☰</button>
   <div class="backdrop" aria-hidden="true"></div>
   <aside class="drawer" aria-hidden="true">
@@ -100,9 +91,6 @@
 
   <nav class="breadcrumb" id="breadcrumb" aria-label="Você está em"></nav>
 
-  <!-- =====================================================================
-       CONTEÚDO PRINCIPAL
-       ===================================================================== -->
   <main id="conteudo-principal">
 
     <!-- Missão -->
@@ -173,13 +161,10 @@
           <li><strong>Cargos:</strong> os 269 cargos distintos são classificados em família (Docência, Saúde, Segurança, Fiscalização, Infraestrutura, TI, Apoio, Liderança, Administrativo, Temporário), escolaridade predominante (calculada dos dados reais) e hierarquia. O mapeamento está em <code>cargo_map.xlsx</code>.</li>
           <li><strong>Gênero:</strong> inferido a partir do primeiro nome, usando a base do IBGE/Censo 2010 tratada por Álvaro Justen/Brasil.IO (licença CC-BY-SA). Nomes ambíguos ficam como <em>"indefinido"</em> e não entram nos cruzamentos.</li>
           <li>
-            <strong>Correção pelo IPCA:</strong> a folha real é calculada convertendo cada mês para o poder de compra de
-            <strong>janeiro de 2022</strong>. Se <code>I(mês)</code> é o número-índice do IPCA no mês e
-            <code>I(jan/2022)</code> é o índice da base, então:
+            <strong>Correção pelo IPCA:</strong> a folha real é calculada aplicando o número-índice do IPCA (IBGE/SIDRA, série 1737) a cada mês. O fator de correção de cada mês é <code>I(nov/2021) / I(mês)</code>.
+            <strong>Novembro de 2021 é a base do índice</strong> (fator = 1,0). Por consequência, o primeiro mês desta análise (jan/2022) tem fator ≈ 0,987, isto é, os preços de jan/2022 estavam cerca de 1,3% acima do nível de nov/2021.
             <br>
-            <code>valor_real = valor_nominal × I(jan/2022) / I(mês)</code>.
-            <br>
-            Assim, janeiro de 2022 tem valor real igual ao valor nominal (fator = 1,0).
+            A comparação entre real e nominal permanece válida: o que importa é a <strong>variação relativa</strong> do poder de compra ao longo do tempo, não o ponto de ancoragem. Por isso a série real continua sendo o indicador correto para medir ganho ou perda acima da inflação, mesmo partindo de uma base diferente de jan/2022.
           </li>
           <li><strong>Média mensal por secretaria:</strong> calculada como <code>folha_total / meses_reais</code>, onde <code>meses_reais</code> é o número de meses em que a secretaria teve pagamento. Isso evita subestimar secretarias criadas ou extintas no período.</li>
           <li><strong>Ticket médio:</strong> calculado como <code>folha bruta do mês / matrículas únicas do mês</code>. Não usa registros (que incluem 13º, férias, rescisão, adiantamento e múltiplos vínculos).</li>
@@ -538,7 +523,7 @@
       </div>
     </section>
 
-    <!-- Base legal e limites — COM O NOVO BLOCO DE CONFIABILIDADE -->
+    <!-- Base legal e limites -->
     <section class="secao" id="base-legal">
       <h2 class="secao-titulo">Base legal e limites</h2>
       <div class="cartao">
@@ -584,7 +569,7 @@
       </div>
     </section>
 
-    <!-- Dados abertos — mantido em XLSX -->
+    <!-- Dados abertos -->
     <section class="secao" id="dados-abertos">
       <h2 class="secao-titulo">Dados abertos</h2>
       <div class="cartao">
@@ -815,9 +800,6 @@
 
   </main>
 
-  <!-- =====================================================================
-       RODAPÉ
-       ===================================================================== -->
   <footer class="rodape">
     <div class="rodape-conteudo">
       <div>
@@ -870,7 +852,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
-  <script src="assets/app.js?v=6" defer></script>
-  <script src="assets/pagina_sobre.js?v=6" defer></script>
+  <script src="assets/app.js?v=7" defer></script>
+  <script src="assets/pagina_sobre.js?v=7" defer></script>
 </body>
 </html>

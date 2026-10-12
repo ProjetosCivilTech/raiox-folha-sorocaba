@@ -15,15 +15,12 @@
   <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
   <link rel="icon" href="imagens/favicon.ico">
-  <link rel="stylesheet" href="assets/style.css?v=6">
+  <link rel="stylesheet" href="assets/style.css?v=7">
   <title>Raio-X do Quadro de Pessoal — Sorocaba</title>
 </head>
 <body>
   <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
 
-  <!-- =====================================================================
-       CABEÇALHO UNIFICADO
-       ===================================================================== -->
   <header class="cabecalho">
     <div class="cabecalho-conteudo">
       <div class="cabecalho-identidade">
@@ -45,9 +42,6 @@
     </div>
   </header>
 
-  <!-- =====================================================================
-       MENU DE NAVEGAÇÃO
-       ===================================================================== -->
   <nav class="menu" aria-label="Navegação principal">
     <div class="menu-conteudo">
       <a href="index.html" class="ativo" aria-current="page">Início</a>
@@ -60,9 +54,6 @@
     </div>
   </nav>
 
-  <!-- =====================================================================
-       DRAWER (menu lateral mobile)
-       ===================================================================== -->
   <button class="botao-lateral" aria-label="Abrir menu lateral" title="Menu lateral">☰</button>
   <div class="backdrop" aria-hidden="true"></div>
   <aside class="drawer" aria-hidden="true">
@@ -87,9 +78,6 @@
 
   <nav class="breadcrumb" id="breadcrumb" aria-label="Você está em"></nav>
 
-  <!-- =====================================================================
-       CONTEÚDO PRINCIPAL
-       ===================================================================== -->
   <main id="conteudo-principal">
 
     <section class="secao aviso-dados-abertos">
@@ -100,7 +88,6 @@
       </p>
     </section>
 
-    <!-- Indicadores gerais -->
     <section class="secao">
       <h2 class="secao-titulo">Indicadores gerais</h2>
       <div class="kpis" id="kpis-principais">
@@ -137,7 +124,6 @@
       </div>
     </section>
 
-    <!-- Evolução mensal -->
     <section class="secao">
       <h2 class="secao-titulo">Evolução mensal da folha</h2>
       <div class="filtros" role="tablist" aria-label="Alternar visualização">
@@ -152,13 +138,12 @@
       </p>
 
       <div class="aviso-metodologico">
-        <p><strong>1. Nominal vs. Real:</strong> a série "Total" mostra valores nominais (o dinheiro efetivamente pago na época). A série "Real" aplica o IPCA (IBGE) com base em jan/2022, permitindo ver se a folha cresceu acima ou abaixo da inflação.</p>
+        <p><strong>1. Nominal vs. Real:</strong> a série "Total" mostra valores nominais (o dinheiro efetivamente pago na época). A série "Real" aplica o IPCA (IBGE) com base em <strong>nov/2021</strong>, permitindo ver se a folha cresceu acima ou abaixo da inflação. A base do índice é apenas uma referência — o que importa é a inclinação relativa da linha real.</p>
         <p><strong>2. Sazonalidade:</strong> picos recorrentes em dezembro refletem o pagamento do 13º salário. Para analisar o custo fixo da máquina pública, utilize a visão "Recorrente", que exclui 13º, férias e rescisões.</p>
         <p><strong>3. O que é "servidor" aqui?</strong> O painel conta <em>matrículas ativas</em>, não pessoas físicas. Um servidor com dois vínculos (ex.: professor com cargo de chefia) conta como duas matrículas e recebe em duas linhas distintas.</p>
       </div>
     </section>
 
-    <!-- Composição por categoria -->
     <section class="secao">
       <h2 class="secao-titulo">Composição da folha por categoria</h2>
       <div class="grade grade-2">
@@ -183,7 +168,6 @@
       </div>
     </section>
 
-    <!-- Top 15 secretarias -->
     <section class="secao">
       <h2 class="secao-titulo">Top 15 secretarias por folha acumulada</h2>
       <div class="tabela-wrap">
@@ -207,7 +191,6 @@
       </div>
     </section>
 
-    <!-- Selo de auditoria -->
     <section class="secao">
       <h2 class="secao-titulo">Selo de auditoria</h2>
       <dl class="selo" id="selo-conteudo">
@@ -217,9 +200,6 @@
 
   </main>
 
-  <!-- =====================================================================
-       RODAPÉ
-       ===================================================================== -->
   <footer class="rodape">
     <div class="rodape-conteudo">
       <div>
@@ -263,7 +243,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
-  <script src="assets/app.js?v=6" defer></script>
-  <script src="assets/pagina_inicial.js?v=6" defer></script>
+  <script src="assets/app.js?v=7" defer></script>
+  <script src="assets/pagina_inicial.js?v=7" defer></script>
 </body>
 </html>
