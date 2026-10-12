@@ -1,14 +1,18 @@
 /* =========================================================================
 Pagina Perfil das Unidades — Raio-X do Quadro de Pessoal
-v7
+v8
 
-Mudanças v7:
-  - Filtro de tipo de unidade normalizado (tolera maiúsculas/minúsculas e
-    variações de grafia: "Escola", "escola", "Escola Municipal", etc.).
-  - Tabela #tabela-unidades limitada a 10 linhas visíveis, com aviso de
-    "Exibindo X de Y" e sugestão de uso dos filtros.
+Mudanças v8:
+  - CORREÇÃO CRÍTICA: mapeamento de colunas do CSV de unidades.
+    O CSV real (dados/unidade_detalhe.csv) usa:
+      unidade_canonica;tipo_unidade;efetivo;folha_total;folha_media;ticket_medio
+    A versão anterior procurava d.tipo (não existe), d.local_canonico
+    (não existe) e d.sigla_secretaria (não existe). Por isso o filtro
+    nunca casava e os nomes das unidades apareciam como "—".
+    Agora usamos as colunas corretas, com fallbacks para nomes alternativos.
   - Ordenação de escolaridade normalizada (caixa + acentos).
   - Aviso metodológico no tempo de casa quando há filtro por secretaria.
+  - Filtro de tipo de unidade tolerante a variações de grafia.
 ========================================================================= */
 
 const ORDEM_ESCOLARIDADE_REF = [
@@ -50,6 +54,10 @@ function normalizarTipo(s) {
     .replace(/\s+/g, " ")
     .trim();
 }
+
+/* Acesso tolerante às colunas do CSV de unidades */
+function getTipo(u)      { return u.tipo_unidade      || u.tipo           || ""; }
+function getUnidade(u)   { return u.unidade_canonica  || u.local_canonico || u.local_trabalho || ""; }
 
 const ROTULOS_TEMPO = {
   0: "0-5 anos",
@@ -695,8 +703,8 @@ function renderizarTabelaUnidadeTop20(dados) {
   }
 
   tbody.innerHTML = dados.map((d) => `<tr>
-    <td>${escaparHTML(d.local_trabalho || "")}</td>
-    <td>${escaparHTML(d.tipo || "")}</td>
+    <td>${escaparHTML(getUnidade(d))}</td>
+    <td>${escaparHTML(getTipo(d))}</td>
     <td class="numerico">${num(d.efetivo).toLocaleString("pt-BR")}</td>
     <td class="numerico">${fmtBRL.format(num(d.folha_total))}</td>
     <td class="numerico">${fmtBRL.format(num(d.ticket_medio))}</td>
@@ -740,7 +748,7 @@ function renderizarTopUnidades(dados, filtroTipo = "") {
     const chaveNorm = normalizarTipo(chave);
     const subset = dados
       .filter((d) => {
-        const tipoNorm = normalizarTipo(d.tipo);
+        const tipoNorm = normalizarTipo(getTipo(d));
         return tipoNorm === chaveNorm ||
                tipoNorm.includes(chaveNorm) ||
                chaveNorm.includes(tipoNorm);
@@ -751,7 +759,7 @@ function renderizarTopUnidades(dados, filtroTipo = "") {
     if (!subset.length) return "";
 
     const total = dados.filter((d) => {
-      const tipoNorm = normalizarTipo(d.tipo);
+      const tipoNorm = normalizarTipo(getTipo(d));
       return tipoNorm === chaveNorm ||
              tipoNorm.includes(chaveNorm) ||
              chaveNorm.includes(tipoNorm);
@@ -766,10 +774,7 @@ function renderizarTopUnidades(dados, filtroTipo = "") {
         ${subset.map((u) => `
           <div class="cartao" style="padding: 0.75rem; border-left: 3px solid var(--azul-osb-claro);">
             <div style="font-weight: 600; color: var(--azul-escuro); font-size: 0.9rem; margin-bottom: 0.25rem;">
-              ${escaparHTML(u.local_canonico)}
-            </div>
-            <div style="font-size: 0.75rem; color: var(--cinza-texto); margin-bottom: 0.5rem;">
-              ${escaparHTML(u.sigla_secretaria || "—")}
+              ${escaparHTML(getUnidade(u))}
             </div>
             <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
               <span><strong>${fmtNum.format(u.efetivo)}</strong> servidores</span>
@@ -783,8 +788,8 @@ function renderizarTopUnidades(dados, filtroTipo = "") {
 }
 
 /* -------------------------------------------------------------------------
-Tabela de unidades nominais — v7
-Filtro normalizado + limite de 10 linhas visíveis.
+Tabela de unidades nominais — v8
+Corrige o mapeamento de colunas e normaliza o filtro.
 ------------------------------------------------------------------------- */
 function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
   const tbody = document.querySelector("#tabela-unidades tbody");
@@ -793,11 +798,11 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
 
   let filtrado = dados;
 
-  // Filtro por tipo normalizado
+  // Filtro por tipo normalizado (aceita variações de grafia)
   if (filtroTipo) {
     const filtroNorm = normalizarTipo(filtroTipo);
     filtrado = filtrado.filter((d) => {
-      const tipoNorm = normalizarTipo(d.tipo);
+      const tipoNorm = normalizarTipo(getTipo(d));
       return tipoNorm === filtroNorm ||
              tipoNorm.includes(filtroNorm) ||
              filtroNorm.includes(tipoNorm);
@@ -808,14 +813,15 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
   if (termoBusca) {
     const t = termoBusca.toLowerCase();
     filtrado = filtrado.filter((d) =>
-      String(d.local_canonico || "").toLowerCase().includes(t) ||
-      String(d.sigla_secretaria || "").toLowerCase().includes(t)
+      String(getUnidade(d)).toLowerCase().includes(t)
     );
   }
 
   // Ordenação
   filtrado = [...filtrado].sort((a, b) => {
-    if (a.tipo !== b.tipo) return String(a.tipo).localeCompare(String(b.tipo));
+    const ta = String(getTipo(a));
+    const tb = String(getTipo(b));
+    if (ta !== tb) return ta.localeCompare(tb);
     return b.efetivo - a.efetivo;
   });
 
@@ -827,12 +833,11 @@ function renderizarTabelaUnidades(dados, filtroTipo = "", termoBusca = "") {
     return;
   }
 
-  // Limita visualmente a 10 linhas
   const visiveis = filtrado.slice(0, LIMITE_TABELA_UNIDADES);
 
   const linhasHTML = visiveis.map((u) => `<tr>
-    <td>${escaparHTML(u.tipo)}</td>
-    <td>${escaparHTML(u.local_canonico)}</td>
+    <td>${escaparHTML(getTipo(u))}</td>
+    <td>${escaparHTML(getUnidade(u))}</td>
     <td class="numerico">${fmtNum.format(u.efetivo)}</td>
     <td class="numerico">${fmtBRL.format(u.folha_total)}</td>
     <td class="numerico">${fmtBRL.format(u.folha_media)}</td>
