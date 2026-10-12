@@ -1,10 +1,15 @@
 /* =========================================================================
 Pagina Genero — Raio-X do Quadro de Pessoal da Prefeitura de Sorocaba
-v5
+v6
 
 Compatível com:
   - genero.html (cabeçalho unificado, IDs atualizados)
-  - app.js v5 (helpers fmtBRL, fmtNum, graficoLinha, graficoRosca, etc.)
+  - app.js v7 (helpers fmtBRL, fmtNum, graficoLinha, graficoRosca)
+
+Mudanças v6:
+  - CORREÇÃO: em renderizarCategoria, o campo folha_total agora SOMA os
+    valores de F + M. Antes usava Math.max, pegando só a fatia do gênero
+    dominante e subestimando o total real da categoria na tabela.
 
 Regras de supressão mantidas:
   - gráfico gap: n>=20 por gênero
@@ -13,7 +18,6 @@ Regras de supressão mantidas:
 Cores de gênero:
   - feminino = verde OSB
   - masculino = índigo
-  (independentes do CORES global, que agora é verde)
 ========================================================================= */
 
 const estadoGen = {
@@ -39,8 +43,8 @@ const ROTULOS_GRUPO_GENERO = {
   inativos: "Inativos e pensionistas",
 };
 
-const COR_GENERO_FEM = "#2e7d32";  /* verde OSB */
-const COR_GENERO_MASC = "#414487"; /* índigo    */
+const COR_GENERO_FEM = "#2e7d32";
+const COR_GENERO_MASC = "#414487";
 
 /* -------------------------------------------------------------------------
 Inicialização
@@ -63,7 +67,7 @@ async function inicializar() {
       carregarJSON("dados/auditoria.json"),
     ]);
 
-    // --- Normalização numérica ---
+    // Normalização numérica
     geral.forEach((r) => {
       r.num_matriculas = num(r.num_matriculas);
       r.num_registros = num(r.num_registros);
@@ -190,7 +194,6 @@ function renderizarCoberturaGenero() {
 
     alvo.innerHTML = itens.map((par) => `<div><dt>${par[0]}</dt><dd>${par[1]}</dd></div>`).join("");
 
-    // Nota abaixo do bloco
     let nota = alvo.parentElement.querySelector(".aviso-metodologico.cobertura-nota");
     if (!nota) {
       nota = document.createElement("div");
@@ -205,7 +208,7 @@ function renderizarCoberturaGenero() {
   } catch (e) {
     console.error("[genero] Erro ao carregar cobertura:", e);
     alvo.innerHTML = '<div class="carregando">Não foi possível carregar a cobertura. ' +
-      '<a href="dados/genero_geral.csv" download>Baixar CSV</a>.</div>';
+      '<a href="dados/excel/genero_geral.xlsx" download>Baixar XLSX</a>.</div>';
   }
 }
 
@@ -406,7 +409,8 @@ function renderizarLideranca() {
 }
 
 /* -------------------------------------------------------------------------
-Gráfico 4 — Composição por categoria de vínculo
+Gráfico 4 — Composição por categoria de vínculo — CORRIGIDO v6
+Folha total agora SOMA os valores de F + M (antes usava Math.max).
 ------------------------------------------------------------------------- */
 function renderizarCategoria() {
   const ctx = document.getElementById("grafico-categoria");
@@ -425,7 +429,8 @@ function renderizarCategoria() {
         folha_media_masc: 0,
       };
     }
-    agrupado[k].folha_total = Math.max(agrupado[k].folha_total, num(r.folha_total));
+    // CORREÇÃO v6: somar (antes: Math.max)
+    agrupado[k].folha_total += num(r.folha_total);
     if (r.genero_inferido === "feminino") agrupado[k].folha_media_fem = num(r.folha_media);
     if (r.genero_inferido === "masculino") agrupado[k].folha_media_masc = num(r.folha_media);
   });
@@ -473,7 +478,6 @@ function renderizarCategoria() {
     },
   });
 
-  // Tabela
   const tbody = document.querySelector("#tabela-categoria tbody");
   if (tbody) {
     tbody.innerHTML = dados.map((d) => `<tr>
@@ -617,7 +621,6 @@ function renderizarGap() {
     },
   });
 
-  // Tabela (com threshold de n>=10)
   const tbody = document.querySelector("#tabela-gap tbody");
   if (tbody) {
     const todos = [...estadoGen.gap]

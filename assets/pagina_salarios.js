@@ -1,7 +1,19 @@
 /* =========================================================================
 Pagina Salarios — Raio-X do Quadro de Pessoal da Prefeitura de Sorocaba
-v6 — Compatível com salarios_por_perfil.csv (colunas escolaridade_canonica
-      e faixa_tempo) + salarios.html atual + app.js v6
+v7
+
+Compatível com:
+  - salarios.html (cabeçalho unificado, IDs atualizados)
+  - app.js v7 (helpers fmtBRL, fmtNum, graficoLinha, graficoBarras)
+  - salarios_por_perfil.csv (formato cruzado escolaridade × tempo)
+
+Mudanças v7:
+  - CORREÇÃO CRÍTICA: o CSV salarios_por_perfil tem formato cruzado
+    (uma linha por combinação escolaridade × tempo de casa). A versão
+    anterior empurrava 2 registros por linha sem agregar, gerando 44
+    barras duplicadas nos gráficos e 88 linhas na tabela.
+    Agora agregamos por dimensão: soma de n + média ponderada.
+  - Nenhuma outra alteração funcional.
 ========================================================================= */
 
 const estadoSal = {
@@ -15,6 +27,31 @@ const estadoSal = {
 };
 
 const num = (v) => (v === null || v === undefined || v === "" ? 0 : Number(v));
+
+/* -------------------------------------------------------------------------
+Agregação por dimensão — corrige formato cruzado do CSV
+------------------------------------------------------------------------- */
+function agregarPorDimensao(linhas, campoChave, nomeDimensao) {
+  const mapa = {};
+  linhas.forEach((r) => {
+    const categoria = String(r[campoChave] || "").trim();
+    if (!categoria) return;
+    if (!mapa[categoria]) {
+      mapa[categoria] = { n: 0, somaPonderadaMedia: 0, somaPonderadaMediana: 0 };
+    }
+    const n = num(r.n);
+    mapa[categoria].n += n;
+    mapa[categoria].somaPonderadaMedia += num(r.folha_media) * n;
+    mapa[categoria].somaPonderadaMediana += num(r.folha_mediana) * n;
+  });
+  return Object.entries(mapa).map(([categoria, agg]) => ({
+    dimensao: nomeDimensao,
+    categoria,
+    n: agg.n,
+    folha_media: agg.n > 0 ? agg.somaPonderadaMedia / agg.n : 0,
+    folha_mediana: agg.n > 0 ? agg.somaPonderadaMediana / agg.n : 0,
+  }));
+}
 
 /* -------------------------------------------------------------------------
 Inicialização
@@ -53,33 +90,12 @@ async function inicializar() {
     });
 
     // -----------------------------------------------------------------------
-    // CORREÇÃO CRÍTICA: normalizar colunas do CSV salarios_por_perfil
-    // O CSV tem: escolaridade_canonica, faixa_tempo, n, folha_media, folha_mediana
-    // O código espera: dimensao, categoria, n, folha_media, folha_mediana
+    // Agregação por dimensão (o CSV é cruzado)
     // -----------------------------------------------------------------------
-    const perfisNormalizados = [];
-    salariosPerfil.forEach((r) => {
-      // Escolaridade
-      if (r.escolaridade_canonica) {
-        perfisNormalizados.push({
-          dimensao: "escolaridade",
-          categoria: r.escolaridade_canonica,
-          n: num(r.n),
-          folha_media: num(r.folha_media),
-          folha_mediana: num(r.folha_mediana),
-        });
-      }
-      // Tempo de casa (faixa_tempo) — só inclui se tiver valor
-      if (r.faixa_tempo) {
-        perfisNormalizados.push({
-          dimensao: "tempo_casa",
-          categoria: r.faixa_tempo,
-          n: num(r.n),
-          folha_media: num(r.folha_media),
-          folha_mediana: num(r.folha_mediana),
-        });
-      }
-    });
+    const perfisNormalizados = [
+      ...agregarPorDimensao(salariosPerfil, "escolaridade_canonica", "escolaridade"),
+      ...agregarPorDimensao(salariosPerfil, "faixa_tempo", "tempo_casa"),
+    ];
 
     estadoSal.distribuicao = distribuicao.sort((a, b) => a.ano - b.ano || a.mes - b.mes);
     estadoSal.gini = gini.sort((a, b) => a.ano - b.ano || a.mes - b.mes);
@@ -451,7 +467,7 @@ function renderizarHistograma() {
 }
 
 /* -------------------------------------------------------------------------
-Remuneração por perfil (escolaridade + tempo de casa) — CORRIGIDO
+Remuneração por perfil — v7 com agregação correta
 ------------------------------------------------------------------------- */
 function renderizarSalariosPerfil() {
   const dados = estadoSal.salariosPerfil || [];
@@ -466,7 +482,9 @@ function renderizarGraficoSalarioEscolaridade(dados) {
   const ctx = document.getElementById("grafico-salario-escolaridade");
   if (!ctx) return;
 
-  const escolaridade = dados.filter((d) => d.dimensao === "escolaridade");
+  const escolaridade = dados
+    .filter((d) => d.dimensao === "escolaridade")
+    .sort((a, b) => a.folha_media - b.folha_media);
   if (!escolaridade.length) return;
 
   if (estadoSal.graficos.salEsc) estadoSal.graficos.salEsc.destroy();
@@ -513,7 +531,15 @@ function renderizarTabelaSalarioPerfil(dados) {
 
   const rotuloDim = { escolaridade: "Escolaridade", tempo_casa: "Tempo de casa" };
 
-  tbody.innerHTML = dados.map((d) => `<tr>
+  // Ordena: escolaridade por folha_media crescente, tempo_casa por folha_media crescente
+  const escolaridade = dados.filter((d) => d.dimensao === "escolaridade")
+    .sort((a, b) => a.folha_media - b.folha_media);
+  const tempo = dados.filter((d) => d.dimensao === "tempo_casa")
+    .sort((a, b) => a.folha_media - b.folha_media);
+
+  const ordenado = [...escolaridade, ...tempo];
+
+  tbody.innerHTML = ordenado.map((d) => `<tr>
     <td>${rotuloDim[d.dimensao] || d.dimensao}</td>
     <td>${d.categoria}</td>
     <td class="numerico">${fmtNum.format(d.n)}</td>
