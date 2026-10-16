@@ -326,20 +326,19 @@ Gráfico 2 — Evolução da participação feminina
 ------------------------------------------------------------------------- */
 function renderizarGraficoEvolucao() {
   const ctx = document.getElementById("grafico-evolucao");
-  if (!ctx) return;
-
+  if (!ctx || !window.SerieInterativa) return;
   const dados = [...estadoGen.evolucao].sort((a, b) => a.ano - b.ano || a.mes - b.mes);
-  const labels = dados.map((d) => rotuloPeriodo(d.ano, d.mes));
-  const valores = dados.map((d) => d.pct_feminino);
-
-  if (estadoGen.graficos.evolucao) estadoGen.graficos.evolucao.destroy();
-  estadoGen.graficos.evolucao = graficoLinha(ctx, labels, valores, {
-    label: "% feminino",
-    cor: COR_GENERO_FEM,
-    corFundo: "rgba(46,125,50,0.10)",
-    formatador: (v) => v.toFixed(1).replace(".", ",") + "%",
-    eixoYFormatador: (v) => v.toFixed(0) + "%",
-    inicioZero: false,
+  const ctrl = SerieInterativa.criarGenerica(ctx, {
+    valFormat: (v) => v.toFixed(1).replace(".", ",") + "%",
+    tickFormat: (v) => v.toFixed(0) + "%",
+    yTitle: "% de mulheres",
+    beginAtZero: false,
+  });
+  estadoGen.graficos.evolucao = ctrl.chart;
+  ctrl.definir({
+    periodos: dados.map((d) => ({ ano: d.ano, mes: d.mes })),
+    series: [{ label: "Mulheres entre as matrículas com gênero identificado", dados: dados.map((d) => d.pct_feminino), cor: SerieInterativa.CATEGORICAS[0] }],
+    ariaLabel: "Evolução mensal da participação feminina nas matrículas. Uma tabela equivalente está abaixo do gráfico.",
   });
 }
 

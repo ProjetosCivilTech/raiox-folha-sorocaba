@@ -157,11 +157,6 @@ function inicializarMenu() {
 
   const botaoHamburguer = document.querySelector(".menu-hamburguer");
   if (botaoHamburguer) {
-    botaoHamburguer.addEventListener("click", () => {
-      const aberto = botaoHamburguer.getAttribute("aria-expanded") === "true";
-      botaoHamburguer.setAttribute("aria-expanded", String(!aberto));
-      document.querySelectorAll(".menu a").forEach((a) => a.classList.toggle("visivel"));
-    });
   }
 
   const botaoLateral = document.querySelector(".botao-lateral");
@@ -181,6 +176,8 @@ function inicializarMenu() {
   }
 
   if (botaoLateral) botaoLateral.addEventListener("click", abrirDrawer);
+  // O ☰ da barra de menu (visível só em telas estreitas) passa a abrir o menu lateral.
+  if (botaoHamburguer) botaoHamburguer.addEventListener("click", () => { abrirDrawer(); if (fechar) fechar.focus(); });
   if (fechar) fechar.addEventListener("click", fecharDrawer);
   if (backdrop) backdrop.addEventListener("click", fecharDrawer);
   document.addEventListener("keydown", (e) => {

@@ -188,89 +188,26 @@ Gráfico — Evolução dos percentis (p10, p50, p90)
 ------------------------------------------------------------------------- */
 function renderizarGraficoPercentis() {
   const ctx = document.getElementById("grafico-percentis");
-  if (!ctx) return;
-
+  if (!ctx || !window.SerieInterativa) return;
   const dist = estadoSal.distribuicao;
   if (!dist.length) return;
-
-  const labels = dist.map((d) => rotuloPeriodo(d.ano, d.mes));
-
-  if (estadoSal.graficos.percentis) estadoSal.graficos.percentis.destroy();
-
-  estadoSal.graficos.percentis = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [
-        {
-          label: "p90 (topo 10%)",
-          data: dist.map((d) => d.p90),
-          borderColor: CORES.azulClaro,
-          backgroundColor: "rgba(78,140,58,0.10)",
-          borderWidth: 2,
-          fill: false,
-          tension: 0.25,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-        },
-        {
-          label: "Mediana (p50)",
-          data: dist.map((d) => d.p50),
-          borderColor: CORES.verdeClaro,
-          backgroundColor: "rgba(122,182,72,0.12)",
-          borderWidth: 2,
-          fill: false,
-          tension: 0.25,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-        },
-        {
-          label: "p10 (base 10%)",
-          data: dist.map((d) => d.p10),
-          borderColor: CORES.azulEscuro,
-          backgroundColor: "rgba(29,64,35,0.10)",
-          borderWidth: 2,
-          fill: false,
-          tension: 0.25,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "bottom",
-          labels: { color: CORES.pretoSuave, font: { size: 11 }, boxWidth: 12, padding: 10 },
-        },
-        tooltip: {
-          callbacks: {
-            label: (item) => `${item.dataset.label}: ${fmtBRL.format(item.parsed.y)}`,
-          },
-        },
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: {
-            color: CORES.cinzaTexto,
-            maxRotation: 45,
-            autoSkip: true,
-            maxTicksLimit: 14,
-          },
-        },
-        y: {
-          beginAtZero: true,
-          grid: { color: CORES.cinzaBorda },
-          ticks: {
-            color: CORES.cinzaTexto,
-            callback: (v) => fmtBRLCompacto(v),
-          },
-        },
-      },
-    },
+  const ctrl = SerieInterativa.criarGenerica(ctx, {
+    valFormat: (v) => fmtBRL.format(v),
+    tickFormat: (v) => fmtBRLCompacto(v),
+    beginAtZero: true,
+    sombrear: (m) => m.mes === 1,
+    notaSombra: "Faixas cinza = janeiro: as férias saem da rubrica Pagamento Mensal e puxam os percentis baixos para baixo.",
+    extra: (i, d) => (d.periodos[i].mes === 1 ? "Janeiro: efeito férias" : null),
+  });
+  estadoSal.graficos.percentis = ctrl.chart;
+  ctrl.definir({
+    periodos: dist.map((d) => ({ ano: d.ano, mes: d.mes })),
+    series: [
+      { label: "p90 (topo 10%)", dados: dist.map((d) => d.p90), cor: SerieInterativa.CATEGORICAS[1] },
+      { label: "Mediana (p50)", dados: dist.map((d) => d.p50), cor: SerieInterativa.CATEGORICAS[0] },
+      { label: "p10 (base 10%)", dados: dist.map((d) => d.p10), cor: SerieInterativa.CATEGORICAS[2] },
+    ],
+    ariaLabel: "Evolução mensal dos percentis p10, mediana e p90 da folha recorrente. Uma tabela equivalente está abaixo do gráfico.",
   });
 }
 
@@ -279,63 +216,22 @@ Gráfico — Evolução do índice de Gini
 ------------------------------------------------------------------------- */
 function renderizarGraficoGini() {
   const ctx = document.getElementById("grafico-gini");
-  if (!ctx) return;
-
+  if (!ctx || !window.SerieInterativa) return;
   const gin = estadoSal.gini;
   if (!gin.length) return;
-
-  const labels = gin.map((d) => rotuloPeriodo(d.ano, d.mes));
-
-  if (estadoSal.graficos.gini) estadoSal.graficos.gini.destroy();
-
-  estadoSal.graficos.gini = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: "Gini",
-        data: gin.map((d) => d.gini),
-        borderColor: CORES.azulClaro,
-        backgroundColor: "rgba(78,140,58,0.10)",
-        borderWidth: 2,
-        fill: true,
-        tension: 0.25,
-        pointRadius: 2,
-        pointHoverRadius: 5,
-      }],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (item) => `Gini: ${item.parsed.y.toFixed(3).replace(".", ",")}`,
-          },
-        },
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: {
-            color: CORES.cinzaTexto,
-            maxRotation: 45,
-            autoSkip: true,
-            maxTicksLimit: 14,
-          },
-        },
-        y: {
-          beginAtZero: true,
-          max: 1,
-          grid: { color: CORES.cinzaBorda },
-          ticks: {
-            color: CORES.cinzaTexto,
-            callback: (v) => v.toFixed(2).replace(".", ","),
-          },
-        },
-      },
-    },
+  const ctrl = SerieInterativa.criarGenerica(ctx, {
+    valFormat: (v) => v.toFixed(3).replace(".", ","),
+    tickFormat: (v) => v.toFixed(2).replace(".", ","),
+    beginAtZero: false,
+    sombrear: (m) => m.mes === 1,
+    notaSombra: "Faixas cinza = janeiro: o Gini sobe porque quem está de férias não recebe na rubrica, sem piora estrutural.",
+    extra: (i, d) => (d.periodos[i].mes === 1 ? "Janeiro: valor inflado pelo efeito férias" : null),
+  });
+  estadoSal.graficos.gini = ctrl.chart;
+  ctrl.definir({
+    periodos: gin.map((d) => ({ ano: d.ano, mes: d.mes })),
+    series: [{ label: "Índice de Gini", dados: gin.map((d) => d.gini), cor: SerieInterativa.CATEGORICAS[0] }],
+    ariaLabel: "Evolução mensal do índice de Gini da folha recorrente, com picos todo mês de janeiro.",
   });
 }
 

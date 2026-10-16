@@ -1,28 +1,30 @@
 ﻿escolaridade_canonica;genero_inferido;num_matriculas;folha_media
 Sem escolaridade formal registrada;feminino;15;3239.6086458333334
 Sem escolaridade formal registrada;masculino;9;4897.920493150685
-Fundamental incompleto;feminino;55;3666.506639118457
-Fundamental incompleto;indefinido;2;6436.1192
-Fundamental incompleto;masculino;70;5755.664380305603
-Fundamental completo;feminino;228;3868.7505575221235
-Fundamental completo;indefinido;8;3166.9417291066284
-Fundamental completo;masculino;226;4964.534844020797
+Fundamental incompleto;feminino;53;3661.7840667139817
+Fundamental incompleto;indefinido;5;5685.198021582734
+Fundamental incompleto;masculino;69;5737.8643063167
+Fundamental completo;feminino;222;3833.893983637508
+Fundamental completo;indefinido;15;4593.980992907801
+Fundamental completo;masculino;225;4940.490393820714
 Medio incompleto;feminino;34;4032.189222497932
-Medio incompleto;masculino;20;7601.237302631579
-Medio completo;feminino;3769;4125.0622702059945
-Medio completo;indefinido;74;5073.757917555082
-Medio completo;masculino;1610;5901.882658493813
-Superior incompleto;feminino;3931;1639.5981338463919
-Superior incompleto;indefinido;44;2378.938963963964
-Superior incompleto;masculino;974;2905.0843594504267
-Superior completo;feminino;10687;6273.949586329277
-Superior completo;indefinido;142;8028.406695668987
-Superior completo;masculino;2236;10919.838219824365
-Pos-graduacao;feminino;2478;10692.078528754302
-Pos-graduacao;indefinido;47;9931.488874478926
-Pos-graduacao;masculino;331;16389.208371267603
+Medio incompleto;indefinido;1;7584.789859154929
+Medio incompleto;masculino;19;7602.625850178359
+Medio completo;feminino;3747;4125.546330157326
+Medio completo;indefinido;102;4834.319517753047
+Medio completo;masculino;1604;5906.559660203845
+Superior incompleto;feminino;3907;1642.289981930871
+Superior incompleto;indefinido;76;1962.1202003816793
+Superior incompleto;masculino;966;2919.0897441860466
+Superior completo;feminino;10636;6273.05376720145
+Superior completo;indefinido;218;7692.262569953817
+Superior completo;masculino;2211;10938.406930917727
+Pos-graduacao;feminino;2468;10694.71805339688
+Pos-graduacao;indefinido;61;10118.099797091647
+Pos-graduacao;masculino;327;16446.52620620792
 Mestrado;feminino;100;13696.97279883382
-Mestrado;indefinido;2;25644.539735099337
-Mestrado;masculino;43;15395.639158453374
-Doutorado;feminino;21;13973.196429699841
+Mestrado;indefinido;3;21221.47688596491
+Mestrado;masculino;42;15481.267032409214
+Doutorado;feminino;20;13967.468512949039
+Doutorado;indefinido;1;14072.563333333334
 Doutorado;masculino;17;16764.285994371483

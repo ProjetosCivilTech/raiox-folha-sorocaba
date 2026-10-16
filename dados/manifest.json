@@ -1,16 +1,16 @@
 {
-  "gerado_em": "2026-10-12T16:30:57",
+  "gerado_em": "2026-10-16T19:58:35",
   "fonte": "Portal da Transparencia de Sorocaba",
   "url_fonte": "https://transparencia.sorocaba.sp.gov.br",
   "publicado_por": "Observatorio Social do Brasil - Sorocaba",
   "total_arquivos": 50,
-  "tamanho_total_kb": 956.1,
+  "tamanho_total_kb": 952.4,
   "arquivos": [
     {
       "arquivo": "auditoria.json",
       "origem": "agregados",
-      "tamanho_bytes": 6550,
-      "tamanho_kb": 6.4
+      "tamanho_bytes": 2763,
+      "tamanho_kb": 2.7
     },
     {
       "arquivo": "cargo_map.csv",
@@ -81,20 +81,20 @@
     {
       "arquivo": "genero_evolucao_mensal.csv",
       "origem": "agregados",
-      "tamanho_bytes": 2487,
+      "tamanho_bytes": 2483,
       "tamanho_kb": 2.4
     },
     {
       "arquivo": "genero_faixa_salarial.csv",
       "origem": "agregados",
-      "tamanho_bytes": 683,
+      "tamanho_bytes": 688,
       "tamanho_kb": 0.7
     },
     {
       "arquivo": "genero_gap_salarial.csv",
       "origem": "agregados",
-      "tamanho_bytes": 4315,
-      "tamanho_kb": 4.2
+      "tamanho_bytes": 4238,
+      "tamanho_kb": 4.1
     },
     {
       "arquivo": "genero_geral.csv",
@@ -105,25 +105,25 @@
     {
       "arquivo": "genero_lideranca.csv",
       "origem": "agregados",
-      "tamanho_bytes": 126,
+      "tamanho_bytes": 125,
       "tamanho_kb": 0.1
     },
     {
       "arquivo": "genero_por_categoria.csv",
       "origem": "agregados",
-      "tamanho_bytes": 1257,
+      "tamanho_bytes": 1273,
       "tamanho_kb": 1.2
     },
     {
       "arquivo": "genero_por_escolaridade.csv",
       "origem": "agregados",
-      "tamanho_bytes": 1434,
-      "tamanho_kb": 1.4
+      "tamanho_bytes": 1529,
+      "tamanho_kb": 1.5
     },
     {
       "arquivo": "genero_por_secretaria.csv",
       "origem": "agregados",
-      "tamanho_bytes": 7874,
+      "tamanho_bytes": 7865,
       "tamanho_kb": 7.7
     },
     {
@@ -249,7 +249,7 @@
     {
       "arquivo": "secretaria_cargo.csv",
       "origem": "agregados",
-      "tamanho_bytes": 13851,
+      "tamanho_bytes": 13853,
       "tamanho_kb": 13.5
     },
     {
@@ -303,7 +303,7 @@
     {
       "arquivo": "unidade_top20.csv",
       "origem": "agregados",
-      "tamanho_bytes": 1706,
+      "tamanho_bytes": 1702,
       "tamanho_kb": 1.7
     }
   ]

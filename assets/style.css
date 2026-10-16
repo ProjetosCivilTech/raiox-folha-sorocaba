@@ -1235,3 +1235,64 @@ footer a:hover,
     page-break-inside: avoid;
   }
 }
+
+/* ==========================================================================
+   SÉRIE INTERATIVA (mobile-first) — v1
+   ========================================================================== */
+.serie-controles { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0 0 0.75rem; }
+.seg { display: inline-flex; border: 1px solid var(--borda, #dfe6da); border-radius: 10px; overflow: hidden; background: #fff; }
+.seg-btn {
+  min-height: 44px; min-width: 44px; padding: 0 1rem; border: 0; background: transparent;
+  font: inherit; font-size: 0.95rem; color: #1d4023; cursor: pointer; touch-action: manipulation;
+}
+.seg-btn + .seg-btn { border-left: 1px solid var(--borda, #dfe6da); }
+.seg-btn.ativo { background: #1d4023; color: #fff; font-weight: 600; }
+.seg-btn:focus-visible { outline: 3px solid #ffd200; outline-offset: -3px; }
+.seg-link { border: 0 !important; background: none; text-decoration: underline; padding: 0 0.5rem; min-height: 44px; }
+.serie-resumo { margin: 0 0 0.5rem; font-size: 1rem; line-height: 1.5; }
+.grafico-container.grafico-serie { height: 400px; min-height: 0; margin: 0.5rem 0; }
+.grafico-serie > canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+.serie-dica { margin: 0 0 0.75rem; font-size: 0.85rem; color: #4f5a50; }
+.serie-eventos { list-style: none; margin: 0 0 1rem; padding: 0; font-size: 0.9rem; }
+.serie-eventos li { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.35rem 0; }
+.serie-ev-num { flex: none; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #8a5a00; color: #fff; font-size: 0.7rem; font-weight: 700; }
+.serie-tabela { margin: 0 0 1.25rem; }
+.serie-tabela summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-weight: 600; color: #1d4023; }
+.tabela-rolagem { max-height: 360px; overflow: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--borda, #dfe6da); border-radius: 8px; }
+.tabela-rolagem table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.tabela-rolagem th, .tabela-rolagem td { padding: 0.5rem 0.75rem; text-align: right; white-space: nowrap; }
+.tabela-rolagem thead th { position: sticky; top: 0; background: #f4f7f2; }
+.tabela-rolagem th:first-child { text-align: left; }
+@media (max-width: 600px) {
+  .grafico-container.grafico-serie { height: 340px; margin-left: -0.5rem; margin-right: -0.25rem; width: auto; }
+  .serie-controles { gap: 0.5rem; }
+  .seg { width: 100%; }
+  .seg .seg-btn { flex: 1; padding: 0 0.5rem; }
+}
+
+/* Cabeçalho compacto no celular: só o menu fica fixo (antes, cabeçalho e menu
+   disputavam o topo e ocupavam ~20% da tela). */
+@media (max-width: 768px) {
+  .cabecalho { position: static; padding: 0.5rem 1rem; }
+  .cabecalho-logo-completo img { height: 40px; }
+  .cabecalho-titulo h1 { font-size: 1.1rem; }
+  .cabecalho-titulo p { display: none; }
+  .cabecalho-lupa { display: none; }
+  .cabecalho-meta { grid-template-columns: 1fr; max-width: none; }
+}
+
+/* Um único botão ☰ (o "botão lateral" não tinha estilo e duplicava o menu) */
+.botao-lateral { display: none; }
+.menu-hamburguer { min-width: 44px; min-height: 44px; }
+
+.serie-faixa { display: inline-block; width: 14px; height: 10px; background: rgba(79,90,80,0.18); vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+
+/* Comparação entre órgãos (Secretarias) */
+.comparar { display: flex; flex-wrap: wrap; gap: 0.5rem 0.75rem; align-items: center; margin: 0 0 0.75rem; }
+.comparar select { min-height: 44px; max-width: 100%; flex: 1 1 220px; font: inherit; }
+.comparar .chk { display: flex; align-items: center; gap: 0.5rem; min-height: 44px; flex-basis: 100%; font-size: 0.95rem; }
+.comparar .chk input { width: 22px; height: 22px; }
+.comparar [hidden] { display: none !important; }
+.chips { display: flex; flex-wrap: wrap; gap: 0.5rem; flex-basis: 100%; }
+.chip { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0 0 0 0.75rem; border: 1px solid var(--borda, #dfe6da); border-radius: 999px; background: #f4f7f2; min-height: 36px; font-size: 0.9rem; }
+.chip button { min-width: 44px; min-height: 36px; border: 0; background: none; font-size: 1.25rem; cursor: pointer; color: #1d4023; }

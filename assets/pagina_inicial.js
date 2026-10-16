@@ -15,6 +15,8 @@ const estadoInicial = {
   visaoAtual: "total",
   graficos: {},
   kpis: null,
+  eventos: [],
+  serie: null,
 };
 
 const num = (v) => (v === null || v === undefined || v === "" ? 0 : Number(v));
@@ -43,7 +45,16 @@ function calcularVariacaoReal() {
 /* -------------------------------------------------------------------------
 KPIs — preenche cada card pelo seu ID
 ------------------------------------------------------------------------- */
+function renderizarCabecalhoPeriodo(kpis) {
+  const el = document.getElementById("cabecalho-periodo");
+  const p = kpis && kpis.periodo;
+  if (!el || !p) return;
+  const fmt = (s) => { const [a, m] = String(s).split("-").map(Number); return a && m ? rotuloPeriodo(a, m) : s; };
+  el.innerHTML = `<strong>Período:</strong> ${fmt(p.inicio)} a ${fmt(p.fim)} &nbsp;·&nbsp; <strong>${p.meses_cobertos || 0} meses</strong>`;
+}
+
 function renderizarKPIs(kpis) {
+  renderizarCabecalhoPeriodo(kpis);
   const ultimo = kpis.ultimo_mes || {};
   const totais = kpis.totais || {};
   const periodo = kpis.periodo || {};
@@ -74,6 +85,8 @@ function renderizarKPIs(kpis) {
 
   const elVar = document.getElementById("kpi-variacao");
   if (elVar) elVar.textContent = calcularVariacaoNominal() + "%";
+  const elVarDet = document.getElementById("kpi-variacao-detalhe");
+  if (elVarDet) elVarDet.textContent = "Nominal. Descontada a inflação (IPCA): +" + calcularVariacaoReal() + "%";
 
   const elSec = document.getElementById("kpi-secretarias");
   if (elSec) elSec.textContent = fmtNum.format(num(totais.secretarias_unicas));
@@ -84,52 +97,48 @@ Gráfico mensal (Total x Recorrente)
 ------------------------------------------------------------------------- */
 function renderizarGraficoMensal() {
   const ctx = document.getElementById("grafico-folha-mensal");
-  if (!ctx) return;
-
-  const dados = estadoInicial.visaoAtual === "total"
+  if (!ctx || !window.SerieInterativa) return;
+  const linhas = estadoInicial.visaoAtual === "total"
     ? estadoInicial.folhaMensalTotal
     : estadoInicial.folhaMensalRecorrente;
+  if (!linhas || !linhas.length || !estadoInicial.folhaMensalIPCA.length) return;
 
-  if (!dados || !dados.length) return;
-
-  const labels = dados.map((d) => rotuloPeriodo(d.ano, d.mes));
-  const valores = dados.map((d) => num(d.folha_total) / 1e6);
-
-  if (estadoInicial.graficos.mensal) estadoInicial.graficos.mensal.destroy();
-
-  const rotulo = estadoInicial.visaoAtual === "total"
-    ? "Folha total (R$ mi)"
-    : "Folha recorrente (R$ mi)";
-
-  estadoInicial.graficos.mensal = graficoLinha(ctx, labels, valores, {
-    label: rotulo,
-    cor: estadoInicial.visaoAtual === "total" ? CORES.azulClaro : CORES.funcao,
-    corFundo: "rgba(78,140,58,0.10)",
-    formatador: (v) => "R$ " + v.toFixed(1).replace(".", ",") + " mi",
-    eixoYFormatador: (v) => "R$ " + v.toFixed(0) + " mi",
-    inicioZero: false,
-  });
+  if (!estadoInicial.serie) {
+    estadoInicial.serie = SerieInterativa.criar(ctx, {
+      eventos: estadoInicial.eventos,
+      elEventos: document.getElementById("serie-eventos"),
+      elResumo: document.getElementById("serie-resumo"),
+      elTabela: document.getElementById("serie-tabela"),
+    });
+    const botoesPeriodo = document.querySelectorAll("[data-periodo]");
+    botoesPeriodo.forEach((btn) => btn.addEventListener("click", () => {
+      botoesPeriodo.forEach((b) => { b.classList.toggle("ativo", b === btn); b.setAttribute("aria-pressed", String(b === btn)); });
+      estadoInicial.serie.periodo(Number(btn.getAttribute("data-periodo")));
+    }));
+    const reset = document.getElementById("serie-reset");
+    if (reset) reset.addEventListener("click", () => {
+      botoesPeriodo.forEach((b) => { const t = b.getAttribute("data-periodo") === "0"; b.classList.toggle("ativo", t); b.setAttribute("aria-pressed", String(t)); });
+      estadoInicial.serie.resetar();
+    });
+  }
+  const series = SerieInterativa.montarSeries(linhas, estadoInicial.folhaMensalIPCA);
+  estadoInicial.serie.definir(series, estadoInicial.visaoAtual === "total" ? "total" : "recorrente");
 }
 
 /* -------------------------------------------------------------------------
-Toggle Total / Recorrente
+Alternância Total / Recorrente
 ------------------------------------------------------------------------- */
 function inicializarToggle() {
   const botoes = document.querySelectorAll("[data-modo]");
-  if (!botoes.length) return;
-
   botoes.forEach((btn) => {
     btn.addEventListener("click", () => {
       const modo = btn.getAttribute("data-modo");
       if (modo === estadoInicial.visaoAtual) return;
       estadoInicial.visaoAtual = modo;
-      botoes.forEach((b) => {
-        b.classList.remove("ativo");
-        b.setAttribute("aria-selected", "false");
-      });
-      btn.classList.add("ativo");
-      btn.setAttribute("aria-selected", "true");
+      botoes.forEach((b) => { b.classList.toggle("ativo", b === btn); b.setAttribute("aria-pressed", String(b === btn)); });
       renderizarGraficoMensal();
+      const ativo = document.querySelector("[data-periodo].ativo");
+      if (ativo) estadoInicial.serie.periodo(Number(ativo.getAttribute("data-periodo")));
     });
   });
 }
@@ -277,6 +286,7 @@ async function inicializar() {
       mensalIPCA,
       categoria,
       topSec,
+      eventos,
     ] = await Promise.all([
       carregarJSON("dados/kpis.json"),
       carregarJSON("dados/auditoria.json"),
@@ -285,6 +295,7 @@ async function inicializar() {
       carregarCSV("dados/folha_mensal_ipca.csv"),
       carregarCSV("dados/composicao_categoria_mes.csv"),
       carregarCSV("dados/top_secretarias.csv"),
+      fetch("dados/eventos.json").then((r) => (r.ok ? r.json() : [])).catch(() => []),
     ]);
 
     // Normalização numérica
@@ -308,6 +319,7 @@ async function inicializar() {
     estadoInicial.folhaMensalRecorrente = mensalRecorrente;
     estadoInicial.folhaMensalIPCA = mensalIPCA;
     estadoInicial.kpis = kpis;
+    estadoInicial.eventos = Array.isArray(eventos) ? eventos : [];
 
     // Renderização
     renderizarKPIs(kpis);

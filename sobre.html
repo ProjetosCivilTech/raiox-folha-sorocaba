@@ -9,20 +9,20 @@
   <meta property="og:title" content="Sobre — Raio-X do Quadro de Pessoal">
   <meta property="og:description" content="Metodologia, base legal, roadmap e mapas públicos do painel da folha de Sorocaba.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/sobre.html">
+  <meta property="og:url" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/sobre.html">
   <meta property="og:site_name" content="Observatório Social do Brasil — Sorocaba">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:image" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/imagens/og-image.png">
+  <meta property="og:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Sobre — Raio-X do Quadro de Pessoal">
   <meta name="twitter:description" content="Metodologia, base legal e mapas públicos do painel de Sorocaba.">
-  <meta name="twitter:image" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/imagens/og-image.png">
-  <link rel="canonical" href="https://obs-sorocaba.github.io/raiox-folha-sorocaba/sobre.html">
+  <meta name="twitter:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/og-image.png">
+  <link rel="canonical" href="https://projetosciviltech.github.io/raiox-folha-sorocaba/sobre.html">
 
-  <link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
-  <link rel="icon" href="imagens/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="assets/style.css?v=7">
 
   <script>
@@ -299,8 +299,8 @@
               </tr>
               <tr style="border-bottom: 1px solid var(--borda); background: var(--cinza-50);">
                 <td style="padding: 0.5rem 0.75rem;">Gap salarial por cargo</td>
-                <td style="padding: 0.5rem 0.75rem;">20 por gênero</td>
-                <td style="padding: 0.5rem 0.75rem;">Cargos com n &lt; 20 em um dos gêneros são omitidos</td>
+                <td style="padding: 0.5rem 0.75rem;">20 por gênero (gráfico); 10 por gênero (tabela)</td>
+                <td style="padding: 0.5rem 0.75rem;">Cargos abaixo do corte em um dos gêneros são omitidos do gráfico (n &lt; 20) e da tabela (n &lt; 10)</td>
               </tr>
               <tr style="border-bottom: 1px solid var(--borda);">
                 <td style="padding: 0.5rem 0.75rem;">Percentis por secretaria</td>
@@ -698,7 +698,7 @@
           <div style="padding: 1rem; background: #eaf7ea; border-left: 4px solid var(--verde-osb-claro); border-radius: 6px;">
             <strong style="color: var(--verde-osb);">Onda 1 — Concluída</strong>
             <ul style="margin-top: 0.5rem; padding-left: 1.25rem; line-height: 1.7;">
-              <li>Série histórica da folha (56 meses)</li>
+              <li>Série histórica da folha (57 meses, jan/2022 a set/2026)</li>
               <li>Ranking de secretarias</li>
               <li>Composição por categoria</li>
               <li>Análise por secretaria</li>
@@ -761,7 +761,7 @@
           O código deste painel é aberto sob licença <strong>MIT</strong>. Você pode usá-lo,
           modificá-lo e distribuí-lo livremente, desde que mantenha a atribuição ao
           Observatório Social do Brasil — Sorocaba.
-          <a href="https://github.com/obs-sorocaba/raiox-folha-sorocaba/blob/main/LICENSE" target="_blank" rel="noopener">Ver licença MIT no GitHub</a>.
+          <a href="https://github.com/ProjetosCivilTech/raiox-folha-sorocaba/blob/main/LICENSE" target="_blank" rel="noopener">Ver licença MIT no GitHub</a>.
         </p>
 
         <h3 style="font-size: 1rem; color: var(--azul-escuro); margin: 1.25rem 0 0.75rem;">Dados</h3>
@@ -822,7 +822,7 @@
         <h3>Encontrou um erro?</h3>
         <p>
           <a href="mailto:sorocaba@osbrasil.org.br?subject=Erro%20no%20Raio-X%20da%20Folha">Envie um e-mail</a><br>
-          <a href="https://github.com/obs-sorocaba/raiox-folha-sorocaba/issues" target="_blank" rel="noopener">Abra uma issue no GitHub</a>
+          <a href="https://github.com/ProjetosCivilTech/raiox-folha-sorocaba/issues" target="_blank" rel="noopener">Abra uma issue no GitHub</a>
         </p>
       </div>
       <div>
@@ -846,12 +846,12 @@
     <div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;">
       <strong>Este painel usa JavaScript para carregar os dados e renderizar gráficos.</strong>
       Sem JavaScript, os dados brutos continuam disponíveis na pasta
-      <a href="dados/excel/">dados/excel/</a> (formato XLSX).
+      <a href="sobre.html#dados-abertos">lista de dados abertos</a> (formato XLSX).
     </div>
   </noscript>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+  <script src="assets/vendor/chart.umd.js" defer></script>
+  <script src="assets/vendor/papaparse.min.js" defer></script>
   <script src="assets/app.js?v=7" defer></script>
   <script src="assets/pagina_sobre.js?v=7" defer></script>
 </body>

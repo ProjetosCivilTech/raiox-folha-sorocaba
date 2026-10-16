@@ -4,25 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Salários — Raio-X do Quadro de Pessoal</title>
-  <link rel="canonical" href="https://obs-sorocaba.github.io/raiox-folha-sorocaba/salarios.html">
+  <link rel="canonical" href="https://projetosciviltech.github.io/raiox-folha-sorocaba/salarios.html">
   <meta name="description" content="Distribuição salarial do quadro de pessoal da Prefeitura de Sorocaba: percentis, mediana, índice de Gini, histograma por faixa e remuneração por perfil.">
 
   <meta property="og:title" content="Distribuição salarial — Sorocaba">
   <meta property="og:description" content="Percentis, mediana, índice de Gini e histograma da folha recorrente da Prefeitura de Sorocaba.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/salarios.html">
+  <meta property="og:url" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/salarios.html">
   <meta property="og:site_name" content="Observatório Social do Brasil — Sorocaba">
   <meta property="og:locale" content="pt_BR">
-  <meta property="og:image" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/imagens/og-image.png">
-  <meta name="twitter:image" content="https://obs-sorocaba.github.io/raiox-folha-sorocaba/imagens/og-image.png">
+  <meta property="og:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/og-image.png">
+  <meta name="twitter:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Distribuição salarial — Sorocaba">
   <meta name="twitter:description" content="Análise da distribuição salarial do quadro municipal.">
 
-  <link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="imagens/favicon-16x16.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="imagens/apple-touch-icon.png">
-  <link rel="icon" href="imagens/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="assets/style.css?v=6">
 
   <script>
@@ -323,7 +323,7 @@
         <h3>Encontrou um erro?</h3>
         <p>
           <a href="mailto:sorocaba@osbrasil.org.br?subject=Erro%20no%20Raio-X%20da%20Folha">Envie um e-mail</a><br>
-          <a href="https://github.com/obs-sorocaba/raiox-folha-sorocaba/issues" target="_blank" rel="noopener">Abra uma issue no GitHub</a>
+          <a href="https://github.com/ProjetosCivilTech/raiox-folha-sorocaba/issues" target="_blank" rel="noopener">Abra uma issue no GitHub</a>
         </p>
       </div>
       <div>
@@ -347,13 +347,16 @@
     <div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;">
       <strong>Este painel usa JavaScript para carregar os dados e renderizar gráficos.</strong>
       Sem JavaScript, os dados brutos continuam disponíveis na pasta
-      <a href="dados/excel/">dados/excel/</a> (formato XLSX).
+      <a href="sobre.html#dados-abertos">lista de dados abertos</a> (formato XLSX).
     </div>
   </noscript>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+  <script src="assets/vendor/chart.umd.js" defer></script>
+  <script src="assets/vendor/hammer.min.js" defer></script>
+  <script src="assets/vendor/chartjs-plugin-zoom.min.js" defer></script>
+  <script src="assets/vendor/papaparse.min.js" defer></script>
   <script src="assets/app.js?v=6" defer></script>
+  <script src="assets/serie_interativa.js?v=2" defer></script>
   <script src="assets/pagina_salarios.js?v=6" defer></script>
 </body>
 </html>

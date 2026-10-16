@@ -64,6 +64,10 @@ const estado = {
   secretariaAtual: null,
   metricaAtual: "folha_total",
   modo: "municipio",
+  comparar: [],
+  valoresReais: false,
+  suavizar: false,
+  indexar: true,
   graficos: {},
 };
 
@@ -79,7 +83,7 @@ async function inicializar() {
       secretariaPercentis, secretariaGini,
       municipioCargo, municipioEscolaridade, municipioTempo,
       municipioPercentis, municipioGini,
-      kpis, auditoria,
+      kpis, auditoria, ipca,
     ] = await Promise.all([
       carregarCSV("dados/resumo_secretaria.csv"),
       carregarCSV("dados/folha_por_secretaria_mes.csv"),
@@ -99,6 +103,7 @@ async function inicializar() {
       carregarCSV("dados/municipio_gini.csv"),
       carregarJSON("dados/kpis.json"),
       carregarJSON("dados/auditoria.json"),
+      carregarCSV("dados/folha_mensal_ipca.csv"),
     ]);
 
     const camposNum = [
@@ -147,6 +152,9 @@ async function inicializar() {
     estado.municipioGini = municipioGini;
     estado.kpis = kpis;
     estado.auditoria = auditoria;
+    estado.ipcaMap = new Map(ipca.map((r) => [`${r.ano}-${r.mes}`, num(r.indice_ipca)]));
+    estado.ipcaUlt = ipca.length ? num(ipca[ipca.length - 1].indice_ipca) : 1;
+    estado.ipcaRotulo = ipca.length ? rotuloPeriodo(ipca[ipca.length - 1].ano, ipca[ipca.length - 1].mes) : "";
 
     renderizarCabecalhoPeriodo(kpis);
     popularSeletorSecretarias(resumo);
@@ -408,67 +416,166 @@ function renderizarKPIs(resumo) {
   `;
 }
 
+const MUNICIPIO_ID = "__mun__";
+const nomeCurto = (n) => (n ? n.replace(/^Secretaria (d[aeo]s?) /, "") : "Total do município");
+
+function valorMetrica(r, metrica) {
+  if (metrica === "num_matriculas") return num(r.num_matriculas);
+  if (metrica === "ticket_medio") return num(r.ticket_medio);
+  return num(r.folha_total) / 1e6;
+}
+
+/** Série de uma entidade (null = município) alinhada aos períodos; null onde não há dado. */
+function serieDaEntidade(nome, periodos, metrica, real) {
+  const linhas = nome == null ? estado.folhaMunicipalMes : estado.folhaMes.filter((f) => f.secretaria === nome);
+  const mapa = new Map(linhas.map((r) => [`${r.ano}-${r.mes}`, r]));
+  return periodos.map((p) => {
+    const r = mapa.get(`${p.ano}-${p.mes}`);
+    if (!r) return null;
+    let v = valorMetrica(r, metrica);
+    if (real && metrica !== "num_matriculas") {
+      const ix = estado.ipcaMap.get(`${p.ano}-${p.mes}`);
+      if (ix) v = (v * estado.ipcaUlt) / ix;
+    }
+    return v;
+  });
+}
+
+function montarControlesComparacao(canvas) {
+  if (document.getElementById("comparar-secretarias")) return;
+  const cartao = canvas.closest(".cartao");
+  const cont = canvas.closest(".grafico-container");
+  if (!cartao || !cont) return;
+  cont.classList.add("grafico-serie");
+  const div = document.createElement("div");
+  div.id = "comparar-secretarias";
+  div.className = "comparar";
+  div.innerHTML =
+    '<label for="seletor-comparar">Comparar com</label>' +
+    '<select id="seletor-comparar"></select>' +
+    '<div class="chips" id="chips-comparar" aria-live="polite"></div>' +
+    '<label class="chk" id="lbl-real"><input type="checkbox" id="chk-real"> Valores reais (corrigidos pelo IPCA)</label>' +
+    '<label class="chk"><input type="checkbox" id="chk-suavizar"> Suavizar sazonalidade (média móvel de 12 meses)</label>' +
+    '<label class="chk" id="lbl-indice" hidden><input type="checkbox" id="chk-indice" checked> Índice: primeiro mês com dados = 100</label>';
+  cont.parentNode.insertBefore(div, cont);
+
+  div.querySelector("#seletor-comparar").addEventListener("change", (e) => {
+    const v = e.target.value;
+    if (v && estado.comparar.length < 3 && !estado.comparar.includes(v)) { estado.comparar.push(v); estado.indexar = true; }
+    e.target.value = "";
+    renderizarGraficoMetrica();
+  });
+  div.querySelector("#chk-real").addEventListener("change", (e) => { estado.valoresReais = e.target.checked; renderizarGraficoMetrica(); });
+  div.querySelector("#chk-suavizar").addEventListener("change", (e) => { estado.suavizar = e.target.checked; renderizarGraficoMetrica(); });
+  div.querySelector("#chk-indice").addEventListener("change", (e) => { estado.indexar = e.target.checked; renderizarGraficoMetrica(); });
+  div.querySelector("#chips-comparar").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-rm]");
+    if (!b) return;
+    estado.comparar = estado.comparar.filter((n) => n !== b.getAttribute("data-rm"));
+    renderizarGraficoMetrica();
+  });
+}
+
+function atualizarControlesComparacao(base, metrica) {
+  const sel = document.getElementById("seletor-comparar");
+  if (!sel) return;
+  estado.comparar = estado.comparar.filter((n) => n !== base && !(base == null && n === MUNICIPIO_ID));
+  const ordenado = [...estado.resumo].sort((a, b) => num(b.folha_total) - num(a.folha_total));
+  const cheio = estado.comparar.length >= 3;
+  let opts = `<option value="">${cheio ? "Máximo de 3 comparações" : "+ Adicionar órgão…"}</option>`;
+  if (base != null) opts += `<option value="${MUNICIPIO_ID}">Total do município</option>`;
+  ordenado.forEach((s) => { if (s.secretaria !== base) opts += `<option value="${escaparHTML(s.secretaria)}">${escaparHTML(nomeCurto(s.secretaria))}</option>`; });
+  sel.innerHTML = opts;
+  sel.disabled = cheio;
+  Array.from(sel.options).forEach((o) => { if (estado.comparar.includes(o.value)) o.disabled = true; });
+  document.getElementById("chips-comparar").innerHTML = estado.comparar.map((n) =>
+    `<span class="chip">${escaparHTML(n === MUNICIPIO_ID ? "Total do município" : nomeCurto(n))}` +
+    `<button type="button" data-rm="${escaparHTML(n)}" aria-label="Remover ${escaparHTML(n === MUNICIPIO_ID ? "Total do município" : nomeCurto(n))} da comparação">×</button></span>`).join("");
+  const lblIdx = document.getElementById("lbl-indice");
+  if (lblIdx) lblIdx.hidden = estado.comparar.length === 0;
+  const chkReal = document.getElementById("chk-real");
+  if (chkReal) { chkReal.disabled = metrica === "num_matriculas"; chkReal.checked = estado.valoresReais && metrica !== "num_matriculas"; }
+}
+
 function renderizarGraficoMetrica() {
   const ctx = document.getElementById("grafico-folha");
-  if (!ctx) return;
+  if (!ctx || !window.SerieInterativa) return;
 
-  const dados = estado.modo === "municipio"
-    ? estado.folhaMunicipalMes
-    : estado.folhaMes.filter((f) => f.secretaria === estado.secretariaAtual);
+  const periodos = [...estado.folhaMunicipalMes]
+    .sort((a, b) => a.ano - b.ano || a.mes - b.mes)
+    .map((r) => ({ ano: r.ano, mes: r.mes }));
+  if (!periodos.length) return;
 
-  if (!dados || !dados.length) return;
+  montarControlesComparacao(ctx);
+  const base = estado.modo === "municipio" ? null : estado.secretariaAtual;
+  const metrica = estado.metricaAtual;
+  atualizarControlesComparacao(base, metrica);
 
-  const labels = dados.map((d) => rotuloPeriodo(d.ano, d.mes));
+  const real = estado.valoresReais && metrica !== "num_matriculas";
+  const entidades = [base, ...estado.comparar.map((n) => (n === MUNICIPIO_ID ? null : n))];
+  const indexar = entidades.length > 1 && estado.indexar;
 
-  let valores, rotulo, formatador, eixoFormatador, inicioZero;
-
-  switch (estado.metricaAtual) {
-    case "num_matriculas":
-      valores = dados.map((d) => num(d.num_matriculas));
-      rotulo = "Efetivo (matrículas)";
-      formatador = (v) => fmtNum.format(v) + " matrículas";
-      eixoFormatador = (v) => fmtNumCompacto(v);
-      inicioZero = false;
-      break;
-
-    case "ticket_medio":
-      valores = dados.map((d) => num(d.ticket_medio));
-      rotulo = "Ticket médio por matrícula (R$)";
-      formatador = (v) => fmtBRL.format(v);
-      eixoFormatador = (v) => fmtBRLCompacto(v);
-      inicioZero = false;
-      break;
-
-    case "folha_total":
-    default:
-      valores = dados.map((d) => num(d.folha_total) / 1e6);
-      rotulo = "Folha bruta (R$ mi)";
-      formatador = (v) => "R$ " + v.toFixed(1).replace(".", ",") + " mi";
-      eixoFormatador = (v) => "R$ " + v.toFixed(0) + " mi";
-      inicioZero = true;
-      break;
+  let series = entidades.map((nome) => ({
+    label: nomeCurto(nome),
+    dados: serieDaEntidade(nome, periodos, metrica, real),
+  }));
+  if (estado.suavizar) {
+    series = series.map((sr) => ({
+      ...sr,
+      dados: sr.dados.map((_, i) => {
+        if (i < 11) return null;
+        const jan = sr.dados.slice(i - 11, i + 1);
+        return jan.every((v) => v != null) ? jan.reduce((a, v) => a + v, 0) / 12 : null;
+      }),
+    }));
+  }
+  if (indexar) {
+    series = series.map((sr) => {
+      const b0 = sr.dados.find((v) => v != null && v !== 0);
+      return { ...sr, dados: sr.dados.map((v) => (v == null || !b0 ? null : (v / b0) * 100)) };
+    });
   }
 
-  if (estado.graficos.folha) estado.graficos.folha.destroy();
+  const rotulos = {
+    folha_total: "Folha bruta (R$ mi)",
+    num_matriculas: "Efetivo (matrículas)",
+    ticket_medio: "Ticket médio por matrícula (R$)",
+  };
+  const rotulo = rotulos[metrica] || rotulos.folha_total;
+  const sufixoReal = (real ? ` · R$ de ${estado.ipcaRotulo}` : "") + (estado.suavizar ? " · média 12 m" : "");
 
-  estado.graficos.folha = graficoLinha(ctx, labels, valores, {
-    label: rotulo,
-    cor: CORES.azulClaro,
-    corFundo: "rgba(78,140,58,0.10)",
-    formatador: formatador,
-    eixoYFormatador: eixoFormatador,
-    inicioZero: inicioZero,
+  let cfg;
+  if (indexar) {
+    cfg = { valFormat: (v) => v.toFixed(1).replace(".", ","), tickFormat: (v) => v.toFixed(0), yTitle: "Índice (base = 100)" + (estado.suavizar ? " · média 12 m" : ""), beginAtZero: false };
+  } else if (metrica === "num_matriculas") {
+    cfg = { valFormat: (v) => fmtNum.format(v) + " matrículas", tickFormat: (v) => fmtNumCompacto(v), yTitle: "Matrículas" + sufixoReal, beginAtZero: false };
+  } else if (metrica === "ticket_medio") {
+    cfg = { valFormat: (v) => fmtBRL.format(v), tickFormat: (v) => fmtBRLCompacto(v), yTitle: "R$ por matrícula" + sufixoReal, beginAtZero: false };
+  } else {
+    cfg = { valFormat: (v) => "R$ " + v.toFixed(1).replace(".", ",") + " mi", tickFormat: (v) => v.toFixed(0), yTitle: "R$ milhões" + sufixoReal, beginAtZero: true };
+  }
+  cfg.extra = (i, d) => {
+    const s0 = d.series[0].dados;
+    if (indexar || i < 12 || s0[i] == null || !s0[i - 12]) return null;
+    const v = (s0[i] / s0[i - 12] - 1) * 100;
+    return `${d.series[0].label} — var. 12 meses: ${(v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1).replace(".", ",")}%`;
+  };
+
+  const ctrl = SerieInterativa.criarGenerica(ctx, {});
+  ctrl.configurar(cfg);
+  estado.graficos.folha = ctrl.chart;
+  ctrl.definir({
+    periodos,
+    series,
+    ariaLabel: `Evolução mensal de ${rotulo}${indexar ? " em índice" : ""} para ${series.map((x) => x.label).join(", ")}. Uma tabela equivalente está abaixo do gráfico.`,
   });
 
   const cartao = ctx.closest(".cartao");
-  if (cartao) {
-    const titulo = cartao.querySelector(".cartao-titulo");
-    if (titulo) {
-      const contexto = estado.modo === "municipio"
-        ? "Total do município"
-        : estado.secretariaAtual;
-      titulo.textContent = `Evolução mensal — ${rotulo} — ${contexto}`;
-    }
+  const titulo = cartao && cartao.querySelector(".cartao-titulo");
+  if (titulo) {
+    titulo.textContent = indexar
+      ? `Evolução mensal — Índice de ${rotulo.replace(/ \(.*\)$/, "")} (comparação)`
+      : `Evolução mensal — ${rotulo}${series.length === 1 ? " — " + series[0].label : ""}`;
   }
 }
 
