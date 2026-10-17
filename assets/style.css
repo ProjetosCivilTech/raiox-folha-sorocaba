@@ -1296,3 +1296,62 @@ footer a:hover,
 .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; flex-basis: 100%; }
 .chip { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0 0 0 0.75rem; border: 1px solid var(--borda, #dfe6da); border-radius: 999px; background: #f4f7f2; min-height: 36px; font-size: 0.9rem; }
 .chip button { min-width: 44px; min-height: 36px; border: 0; background: none; font-size: 1.25rem; cursor: pointer; color: #1d4023; }
+/* ---- v8: painel de detalhe ao tocar e nota de cores dos gráficos ---- */
+.grafico-detalhe {
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.8rem;
+  min-height: 2.6rem;
+  border: 1px solid var(--borda, #dee2e6);
+  border-radius: 8px;
+  background: var(--cinza-50, #f8f9fa);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--texto-principal, #212529);
+}
+
+.grafico-nota {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--texto-secundario, #495057);
+  font-style: italic;
+}
+
+@media (max-width: 600px) {
+  .grafico-detalhe { font-size: 0.85rem; padding: 0.5rem 0.65rem; }
+  .grafico-nota    { font-size: 0.8rem; }
+}
+/* ---- v9: skeleton shimmer + cards ---- */
+.carregando {
+  display: inline-block;
+  min-width: 120px; min-height: 1.2em;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+  color: transparent;
+  padding: 0.25rem 0.5rem;
+  font-style: normal;
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .carregando { animation: none; background: #f0f0f0; color: var(--texto-secundario, #4f5a50); font-style: italic; }
+}
+
+.grafico-detalhe {
+  margin-top: 0.5rem; padding: 0.6rem 0.8rem; min-height: 2.6rem;
+  border: 1px solid var(--borda, #dee2e6); border-radius: 8px;
+  background: var(--cinza-50, #f8f9fa); font-size: 0.9rem; line-height: 1.45;
+  color: var(--texto-principal, #212529);
+}
+.grafico-nota {
+  margin-top: 0.5rem; font-size: 0.85rem; line-height: 1.5;
+  color: var(--texto-secundario, #495057); font-style: italic;
+}
+@media (max-width: 600px) {
+  .grafico-detalhe { font-size: 0.85rem; padding: 0.5rem 0.65rem; }
+  .grafico-nota { font-size: 0.8rem; }
+}

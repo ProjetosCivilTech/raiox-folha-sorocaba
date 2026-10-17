@@ -6,16 +6,17 @@
   <meta name="description" content="Painel público da folha de pagamento da Prefeitura de Sorocaba. Série histórica, análise por secretaria, distribuição salarial, gênero e infraestrutura das unidades.">
   <meta property="og:title" content="Raio-X do Quadro de Pessoal — Sorocaba">
   <meta property="og:description" content="Painel público da folha de pagamento da Prefeitura de Sorocaba.">
-  <meta property="og:image" content="imagens/logo-obs-brasil.png">
+  <meta property="og:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/logo-obs-brasil.png">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/index.html">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/logo-obs-brasil.png">
   <link rel="canonical" href="https://projetosciviltech.github.io/raiox-folha-sorocaba/index.html">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" href="favicon.ico">
-  <link rel="stylesheet" href="assets/style.css?v=8">
+  <link rel="stylesheet" href="assets/style.css?v=9">
   <title>Raio-X do Quadro de Pessoal — Sorocaba</title>
 </head>
 <body>
@@ -35,9 +36,7 @@
       <div class="cabecalho-meta">
         <img class="cabecalho-lupa" src="imagens/lupa-mapa.png" alt="Ícone de análise" aria-hidden="true">
         <span class="badge-atualizacao" id="badge-atualizacao">Carregando…</span>
-        <div class="cabecalho-periodo" id="cabecalho-periodo">
-          <span>Carregando período…</span>
-        </div>
+        <div class="cabecalho-periodo" id="cabecalho-periodo"><span>Carregando período…</span></div>
       </div>
     </div>
   </header>
@@ -58,8 +57,7 @@
   <div class="backdrop" aria-hidden="true"></div>
   <aside class="drawer" aria-hidden="true">
     <div class="drawer-cabecalho">
-      <h2>Navegação</h2>
-      <p>Raio-X do Quadro de Pessoal</p>
+      <h2>Navegação</h2><p>Raio-X do Quadro de Pessoal</p>
       <button class="drawer-fechar" aria-label="Fechar menu">×</button>
     </div>
     <nav class="drawer-nav" aria-label="Menu lateral">
@@ -81,11 +79,7 @@
   <main id="conteudo-principal">
 
     <section class="secao aviso-dados-abertos">
-      <p>
-        <strong>Dados abertos:</strong> todos os arquivos estão disponíveis em
-        <strong>XLSX</strong> (Excel) na
-        <a href="sobre.html#dados-abertos">seção de dados abertos</a>.
-      </p>
+      <p><strong>Dados abertos:</strong> todos os arquivos estão disponíveis em <strong>XLSX</strong> (Excel) na <a href="sobre.html#dados-abertos">seção de dados abertos</a>.</p>
     </section>
 
     <section class="secao">
@@ -93,32 +87,32 @@
       <div class="kpis" id="kpis-principais">
         <div class="kpi destaque">
           <div class="rotulo">Folha bruta (último mês)</div>
-          <div class="valor" id="kpi-folha-ultimo">Carregando…</div>
+          <div class="valor" id="kpi-folha-ultimo"><span class="carregando">…</span></div>
           <div class="detalhe" id="kpi-folha-ultimo-detalhe"></div>
         </div>
         <div class="kpi">
           <div class="rotulo">Matrículas ativas (último mês)</div>
-          <div class="valor" id="kpi-matriculas-ultimo">Carregando…</div>
+          <div class="valor" id="kpi-matriculas-ultimo"><span class="carregando">…</span></div>
           <div class="detalhe">Vínculos ativos no mês (não pessoas físicas)</div>
         </div>
         <div class="kpi">
           <div class="rotulo">Custo médio por matrícula</div>
-          <div class="valor" id="kpi-ticket-medio">Carregando…</div>
+          <div class="valor" id="kpi-ticket-medio"><span class="carregando">…</span></div>
           <div class="detalhe">Folha bruta ÷ matrículas (último mês)</div>
         </div>
         <div class="kpi">
           <div class="rotulo">Folha acumulada no período</div>
-          <div class="valor" id="kpi-folha-total">Carregando…</div>
+          <div class="valor" id="kpi-folha-total"><span class="carregando">…</span></div>
           <div class="detalhe" id="kpi-folha-total-detalhe"></div>
         </div>
         <div class="kpi">
           <div class="rotulo">Variação no período</div>
-          <div class="valor" id="kpi-variacao">Carregando…</div>
-          <div class="detalhe" id="kpi-variacao-detalhe">Nominal; correção pelo IPCA no gráfico abaixo</div>
+          <div class="valor" id="kpi-variacao"><span class="carregando">…</span></div>
+          <div class="detalhe" id="kpi-variacao-detalhe">Nominal; IPCA no gráfico abaixo</div>
         </div>
         <div class="kpi">
           <div class="rotulo">Secretarias</div>
-          <div class="valor" id="kpi-secretarias">Carregando…</div>
+          <div class="valor" id="kpi-secretarias"><span class="carregando">…</span></div>
           <div class="detalhe">Órgãos distintos na base</div>
         </div>
       </div>
@@ -144,18 +138,15 @@
       <p class="serie-dica">Toque no gráfico para ver os valores. Use dois dedos para ampliar e arraste para navegar; no computador, Ctrl + rolagem amplia.
         <button type="button" class="seg-btn seg-link" id="serie-reset">Redefinir zoom</button></p>
       <ol class="serie-eventos" id="serie-eventos" hidden></ol>
-      <p id="descricao-folha-mensal" class="visually-hidden">
-        Gráfico de linha mostrando a evolução mensal da folha bruta, nominal e corrigida pelo IPCA, entre janeiro de 2022 e o último mês disponível. Uma tabela equivalente está logo abaixo.
-      </p>
+      <p id="descricao-folha-mensal" class="visually-hidden">Gráfico de linha mostrando a evolução mensal da folha bruta, nominal e corrigida pelo IPCA.</p>
       <details class="serie-tabela">
         <summary>Ver os dados em tabela</summary>
         <div class="tabela-rolagem"><table id="serie-tabela"><caption class="visually-hidden">Folha mensal em R$ milhões: nominal, real e variação em 12 meses.</caption></table></div>
       </details>
-
       <div class="aviso-metodologico">
-        <p><strong>1. Nominal vs. Real:</strong> a série "Total" mostra valores nominais (o dinheiro efetivamente pago na época). A série "Real" aplica o IPCA (IBGE) e expressa todos os meses em <strong>reais do último mês disponível</strong>, para comparar com o dinheiro de hoje. Se a linha Real sobe, a folha cresceu acima da inflação.</p>
-        <p><strong>2. Sazonalidade:</strong> picos recorrentes em dezembro refletem o pagamento do 13º salário. *A visão "Recorrente" exclui adiantamentos, férias e rescisões, mas <strong>ainda contém parte do 13º</strong>: novembro sobe cerca de 35% sobre outubro todos os anos, e janeiro cai por causa das férias. Use-a para comparar meses iguais entre anos, não para medir o custo fixo mês a mês.</p>
-        <p><strong>3. O que é "servidor" aqui?</strong> O painel conta <em>matrículas ativas</em>, não pessoas físicas. Um servidor com dois vínculos (ex.: professor com cargo de chefia) conta como duas matrículas e recebe em duas linhas distintas.</p>
+        <p><strong>1. Nominal vs. Real:</strong> a série "Total" mostra valores nominais. A série "Real" aplica o IPCA e expressa todos os meses em <strong>reais do último mês disponível</strong>. Se a linha Real sobe, a folha cresceu acima da inflação.</p>
+        <p><strong>2. Sazonalidade:</strong> picos em dezembro refletem o 13º. A visão "Recorrente" exclui adiantamentos, férias e rescisões, mas <strong>ainda contém parte do 13º</strong>.</p>
+        <p><strong>3. O que é "servidor" aqui?</strong> O painel conta <em>matrículas ativas</em>, não pessoas físicas.</p>
       </div>
     </section>
 
@@ -164,104 +155,92 @@
       <div class="grade grade-2">
         <div class="cartao">
           <h3 class="cartao-titulo">Último mês disponível</h3>
-          <div class="grafico-container">
-            <canvas id="grafico-composicao-rosca" aria-labelledby="descricao-composicao-rosca"></canvas>
-          </div>
-          <p id="descricao-composicao-rosca" class="visually-hidden">
-            Gráfico de rosca mostrando a distribuição da folha bruta do último mês por categoria de vínculo.
-          </p>
+          <div class="grafico-container"><canvas id="grafico-composicao-rosca" aria-labelledby="descricao-composicao-rosca"></canvas></div>
+          <p id="descricao-composicao-rosca" class="visually-hidden">Gráfico de rosca: distribuição da folha por categoria.</p>
         </div>
         <div class="cartao">
           <h3 class="cartao-titulo">Evolução por categoria (R$ milhões)</h3>
-          <div class="grafico-container">
-            <canvas id="grafico-composicao-evolucao" aria-labelledby="descricao-composicao-evolucao"></canvas>
-          </div>
-          <p id="descricao-composicao-evolucao" class="visually-hidden">
-            Gráfico de linhas mostrando a evolução mensal da folha por categoria de vínculo.
-          </p>
+          <div class="grafico-container"><canvas id="grafico-composicao-evolucao" aria-labelledby="descricao-composicao-evolucao"></canvas></div>
+          <p id="descricao-composicao-evolucao" class="visually-hidden">Gráfico de linhas: evolução mensal da folha por categoria.</p>
         </div>
       </div>
     </section>
 
     <section class="secao">
       <h2 class="secao-titulo">Top 15 secretarias por folha acumulada</h2>
-      <div class="tabela-wrap">
-        <table id="tabela-secretarias" aria-describedby="descricao-tabela-secretarias">
-          <caption id="descricao-tabela-secretarias">
-            Maiores secretarias por folha acumulada no período de janeiro de 2022 ao último mês disponível.
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Secretaria</th>
-              <th scope="col" class="numerico">Folha acumulada</th>
-              <th scope="col" class="numerico">Média mensal</th>
-              <th scope="col" class="numerico">Participação</th>
-              <th scope="col" class="numerico">Matrículas únicas</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td colspan="5" class="carregando">Carregando…</td></tr>
-          </tbody>
-        </table>
+      <div class="cartao">
+        <div class="grafico-container" style="height: 560px;">
+          <canvas id="grafico-top-secretarias" role="img" aria-label="Gráfico de barras horizontais com as 15 secretarias de maior folha acumulada."></canvas>
+        </div>
+      </div>
+      <details style="margin-top: 1rem;">
+        <summary style="cursor: pointer; font-weight: 600; color: var(--azul-osb);">Ver tabela detalhada</summary>
+        <div class="tabela-wrap" style="margin-top: 0.75rem;">
+          <table id="tabela-secretarias" aria-describedby="descricao-tabela-secretarias">
+            <caption id="descricao-tabela-secretarias">Maiores secretarias por folha acumulada no período.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Secretaria</th>
+                <th scope="col" class="numerico">Folha acumulada</th>
+                <th scope="col" class="numerico">Média mensal</th>
+                <th scope="col" class="numerico">Participação</th>
+                <th scope="col" class="numerico">Matrículas únicas</th>
+              </tr>
+            </thead>
+            <tbody><tr><td colspan="5" class="carregando">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section class="secao">
+      <h2 class="secao-titulo">Variação real em 12 meses</h2>
+      <p style="color: var(--cinza-texto); margin-bottom: 1rem; max-width: 780px;">
+        Quanto a folha de cada mês variou, <strong>já descontada a inflação (IPCA)</strong>, em relação ao mesmo mês do ano anterior. Comparar o mesmo mês de dois anos elimina o efeito de férias e 13º. <strong>Azul</strong> = cresceu acima da inflação; <strong>laranja</strong> = encolheu em termos reais.
+      </p>
+      <div class="cartao">
+        <div class="grafico-container" style="height: 380px;">
+          <canvas id="grafico-variacao-real" role="img" aria-label="Gráfico de barras com a variação real em 12 meses da folha."></canvas>
+        </div>
       </div>
     </section>
 
     <section class="secao">
       <h2 class="secao-titulo">Selo de auditoria</h2>
-      <dl class="selo" id="selo-conteudo">
-        <div class="carregando">Carregando selo…</div>
-      </dl>
+      <dl class="selo" id="selo-conteudo"><div class="carregando">Carregando selo…</div></dl>
     </section>
 
   </main>
 
   <footer class="rodape">
     <div class="rodape-conteudo">
-      <div>
-        <h3>Raio-X do Quadro de Pessoal</h3>
-        <p>Painel público mantido pelo Observatório Social do Brasil — Sorocaba.</p>
-      </div>
-      <div>
-        <h3>Navegação</h3>
-        <p>
-          <a href="index.html">Início</a><br>
-          <a href="secretarias.html">Secretarias</a><br>
-          <a href="quadro.html">Perfil das Unidades</a><br>
-          <a href="genero.html">Gênero</a><br>
-          <a href="salarios.html">Salários</a><br>
-          <a href="sobre.html">Sobre</a>
-        </p>
-      </div>
-      <div>
-        <h3>Dados abertos</h3>
-        <p><a href="sobre.html#dados-abertos">Ver todos os arquivos XLSX</a></p>
-        <p><a href="sobre.html#dados-abertos">Ver lista de arquivos de dados abertos</a></p>
-      </div>
-      <div>
-        <h3>Contato</h3>
+      <div><h3>Raio-X do Quadro de Pessoal</h3><p>Painel público mantido pelo Observatório Social do Brasil — Sorocaba.</p></div>
+      <div><h3>Navegação</h3><p>
+        <a href="index.html">Início</a><br>
+        <a href="secretarias.html">Secretarias</a><br>
+        <a href="quadro.html">Perfil das Unidades</a><br>
+        <a href="genero.html">Gênero</a><br>
+        <a href="salarios.html">Salários</a><br>
+        <a href="sobre.html">Sobre</a>
+      </p></div>
+      <div><h3>Dados abertos</h3><p><a href="sobre.html#dados-abertos">Ver todos os arquivos XLSX</a></p></div>
+      <div><h3>Contato</h3>
         <p><a href="mailto:contato@sorocaba.osbrasil.org.br">contato@sorocaba.osbrasil.org.br</a></p>
-        <p><a href="https://github.com/ProjetosCivilTech/raiox-folha-sorocaba/issues" target="_blank" rel="noopener">Reportar problema no GitHub</a></p>
+        <p><a href="https://github.com/ProjetosCivilTech/raiox-folha-sorocaba/issues" target="_blank" rel="noopener">Reportar problema</a></p>
       </div>
     </div>
-    <div class="rodape-final">
-      <span id="rodape-atualizacao">Dados públicos · Código aberto · Licença MIT · Dados CC-BY 4.0</span>
-    </div>
+    <div class="rodape-final"><span id="rodape-atualizacao">Dados públicos · Código aberto · Licença MIT · Dados CC-BY 4.0</span></div>
   </footer>
 
-  <noscript>
-    <div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;">
-      <strong>Este painel usa JavaScript para carregar os dados e renderizar gráficos.</strong>
-      Sem JavaScript, os dados brutos continuam disponíveis na pasta
-      <a href="sobre.html#dados-abertos">lista de dados abertos</a> (formato XLSX).
-    </div>
-  </noscript>
+  <noscript><div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;"><strong>Este painel usa JavaScript.</strong> Sem JS, baixe os XLSX em <a href="sobre.html#dados-abertos">dados abertos</a>.</div></noscript>
 
   <script src="assets/vendor/chart.umd.js" defer></script>
   <script src="assets/vendor/hammer.min.js" defer></script>
   <script src="assets/vendor/chartjs-plugin-zoom.min.js" defer></script>
   <script src="assets/vendor/papaparse.min.js" defer></script>
-  <script src="assets/app.js?v=8" defer></script>
-  <script src="assets/serie_interativa.js?v=8" defer></script>
-  <script src="assets/pagina_inicial.js?v=8" defer></script>
+  <script src="assets/paletas.js?v=8" defer></script>
+  <script src="assets/app.js?v=9" defer></script>
+  <script src="assets/serie_interativa.js?v=5" defer></script>
+  <script src="assets/pagina_inicial.js?v=9" defer></script>
 </body>
 </html>

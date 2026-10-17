@@ -1,25 +1,26 @@
 /* =========================================================================
 Série temporal interativa — Raio-X do Quadro de Pessoal
-- Mobile-first: toque para ler valores, pinça/arraste para zoom e pan
-- Períodos rápidos (12 m, 24 m, tudo) e "redefinir zoom"
-- Duas séries na MESMA escala: nominal (tracejada) e real (sólida, R$ do último mês)
-- Eventos numerados (lista abaixo do gráfico, sem texto sobre a linha)
-- Tabela equivalente para leitores de tela
-Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
+v5: 500ms de animação + atualizarSeries (toggle Total↔Recorrente sem flash)
+
+Mantém da v4: fillBetween, referencia, bandaFundo, gradienteNoFill.
 ========================================================================= */
 (function () {
   "use strict";
-
   const COR = { real: "#2f6f2a", nominal: "#2a7ab0", grade: "#dfe6da", texto: "#4f5a50", evento: "#8a5a00" };
-
-  const mesesCurtos = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const mesesCurtos = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
   const rotCurto = (a, m) => `${mesesCurtos[m - 1]}/${String(a).slice(2)}`;
   const rotLongo = (a, m) => `${mesesCurtos[m - 1]}/${a}`;
   const fmtMi = (v) => "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " mi";
   const fmtPct = (v) => (v >= 0 ? "+" : "−") + Math.abs(v).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
   const ehCelular = () => window.matchMedia("(max-width: 600px)").matches;
+  const SEM_ANIMACAO = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /** Constrói séries nominal/real (em R$ milhões) a partir de linhas {ano,mes,folha_total}. */
+  function hexToRgba(hex, alpha) {
+    const h = String(hex).replace("#", "");
+    const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
   function montarSeries(linhas, ipca) {
     const idx = new Map(ipca.map((r) => [`${r.ano}-${r.mes}`, Number(r.indice_ipca)]));
     const ultimo = ipca[ipca.length - 1];
@@ -68,16 +69,12 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
       data: { labels: [], datasets: [] },
       plugins: [pluginEventos],
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        animation: { duration: 250 },
+        responsive: true, maintainAspectRatio: false,
+        animation: SEM_ANIMACAO() ? false : { duration: 500, easing: "easeOutQuart" },
         interaction: { mode: "index", intersect: false },
         layout: { padding: { top: 4, right: 6 } },
         plugins: {
-          legend: {
-            position: "bottom",
-            labels: { usePointStyle: false, boxWidth: 22, boxHeight: 2, color: COR.texto, padding: 14, font: { size: 13 } },
-          },
+          legend: { position: "bottom", labels: { usePointStyle: false, boxWidth: 22, boxHeight: 2, color: COR.texto, padding: 14, font: { size: 13 } } },
           tooltip: {
             padding: 10, bodyFont: { size: 13 }, titleFont: { size: 13 }, boxPadding: 4,
             callbacks: {
@@ -102,13 +99,9 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
           },
         },
         scales: {
-          x: {
-            grid: { display: false },
-            ticks: { color: COR.texto, maxRotation: 0, autoSkip: true, maxTicksLimit: ehCelular() ? 5 : 12 },
-          },
+          x: { grid: { display: false }, ticks: { color: COR.texto, maxRotation: 0, autoSkip: true, maxTicksLimit: ehCelular() ? 5 : 12 } },
           y: {
-            beginAtZero: false,
-            grid: { color: COR.grade },
+            beginAtZero: false, grid: { color: COR.grade },
             title: { display: true, text: "R$ milhões", color: COR.texto },
             ticks: { color: COR.texto, maxTicksLimit: ehCelular() ? 5 : 8, callback: (v) => v.toLocaleString("pt-BR") },
           },
@@ -119,7 +112,7 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
         },
       },
     });
-    canvas.style.touchAction = "pan-y"; // rolagem vertical da página continua funcionando
+    canvas.style.touchAction = "pan-y";
 
     function resumo() {
       if (!o.elResumo || !dados) return;
@@ -166,8 +159,20 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
         l.lineWidth = 2; l.fillStyle = l.strokeStyle; return l;
       });
       chart.canvas.setAttribute("aria-label", `Série mensal ${rotuloSerie}, ${series.meses.length} meses, com valores nominais e reais.`);
-      chart.update("none");
-      chart.resetZoom && chart.resetZoom("none");
+      chart.update();
+      chart.resetZoom && chart.resetZoom();
+      resumo(); tabela(); listaEventos();
+    }
+
+    function atualizarSeries(novasSeries) {
+      dados = novasSeries;
+      if (chart.data.datasets.length >= 2) {
+        chart.data.datasets[0].data = novasSeries.real;
+        chart.data.datasets[1].data = novasSeries.nominal;
+        chart.update();
+      } else {
+        definir(novasSeries, o.rotuloSerie || "total");
+      }
       resumo(); tabela(); listaEventos();
     }
 
@@ -177,16 +182,12 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
       chart.zoomScale("x", { min: n - meses, max: n - 1 }, "none");
     }
 
-    return { chart, definir, periodo, resetar: () => chart.resetZoom() };
+    return { chart, definir, atualizarSeries, periodo, resetar: () => chart.resetZoom() };
   }
 
-
-  /* =====================================================================
-     API genérica: qualquer série mensal (percentis, Gini, % feminino,
-     métricas por secretaria, comparação entre secretarias…).
-     Injeta sozinha: botões de período, dica de toque, eventos e tabela.
-     ===================================================================== */
-  const CATEGORICAS = ["#2f6f2a", "#2a7ab0", "#b8641a", "#7b4fa3"]; // validadas (CVD ΔE ≥ 8, contraste ≥ 3:1)
+  const CATEGORICAS = (window.Paletas && Array.isArray(window.Paletas.CATEGORICA))
+    ? window.Paletas.CATEGORICA
+    : ["#2f6f2a", "#2a7ab0", "#b8641a", "#7b4fa3"];
 
   function criarGenerica(canvas, opts) {
     if (canvas._serieGenerica) return canvas._serieGenerica;
@@ -194,6 +195,7 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
       valFormat: (v) => v.toLocaleString("pt-BR"),
       tickFormat: null, yTitle: "", beginAtZero: false, yMax: undefined,
       eventos: [], sombrear: null, notaSombra: "", extra: null, rotuloColuna: "Mês",
+      fillBetween: null, referencia: null, bandaFundo: null, gradienteNoFill: false,
     }, opts);
     let dados = null, eventosIdx = [];
 
@@ -222,38 +224,72 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
     const plugins = [{
       id: "faixasEeventos",
       beforeDatasetsDraw(chart) {
-        if (!o.sombrear || !dados) return;
-        const { ctx, chartArea, scales } = chart, x = scales.x;
-        const passo = Math.abs(x.getPixelForValue(1) - x.getPixelForValue(0)) || 8;
-        ctx.save(); ctx.beginPath(); ctx.rect(chartArea.left, chartArea.top, chartArea.width, chartArea.height); ctx.clip();
-        ctx.fillStyle = "rgba(79,90,80,0.10)";
-        dados.periodos.forEach((m, i) => {
-          if (i < x.min - 1 || i > x.max + 1 || !o.sombrear(m)) return;
-          ctx.fillRect(x.getPixelForValue(i) - passo / 2, chartArea.top, passo, chartArea.height);
-        });
-        ctx.restore();
+        const { ctx, chartArea, scales } = chart;
+        if (!chartArea) return;
+        if (o.bandaFundo && o.bandaFundo.length) {
+          ctx.save();
+          ctx.beginPath(); ctx.rect(chartArea.left, chartArea.top, chartArea.width, chartArea.height); ctx.clip();
+          let anterior = scales.y.min;
+          o.bandaFundo.forEach((b) => {
+            const y1 = scales.y.getPixelForValue(anterior);
+            const y2 = scales.y.getPixelForValue(Math.min(b.ate, scales.y.max));
+            ctx.fillStyle = b.cor;
+            ctx.fillRect(chartArea.left, Math.min(y1, y2), chartArea.width, Math.abs(y1 - y2));
+            anterior = b.ate;
+          });
+          ctx.restore();
+        }
+        if (o.sombrear && dados) {
+          const x = scales.x;
+          const passo = Math.abs(x.getPixelForValue(1) - x.getPixelForValue(0)) || 8;
+          ctx.save(); ctx.beginPath(); ctx.rect(chartArea.left, chartArea.top, chartArea.width, chartArea.height); ctx.clip();
+          ctx.fillStyle = "rgba(79,90,80,0.10)";
+          dados.periodos.forEach((m, i) => {
+            if (i < x.min - 1 || i > x.max + 1 || !o.sombrear(m)) return;
+            ctx.fillRect(x.getPixelForValue(i) - passo / 2, chartArea.top, passo, chartArea.height);
+          });
+          ctx.restore();
+        }
       },
       afterDatasetsDraw(chart) {
-        const { ctx, chartArea, scales } = chart, x = scales.x;
-        if (!eventosIdx.length) return;
-        ctx.save();
-        eventosIdx.forEach((ev, n) => {
-          if (ev.i < x.min || ev.i > x.max) return;
-          const px = x.getPixelForValue(ev.i);
-          ctx.strokeStyle = COR.evento; ctx.fillStyle = COR.evento; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
-          ctx.beginPath(); ctx.moveTo(px, chartArea.top + 14); ctx.lineTo(px, chartArea.bottom); ctx.stroke(); ctx.setLineDash([]);
-          ctx.beginPath(); ctx.arc(px, chartArea.top + 8, 8, 0, Math.PI * 2); ctx.fill();
-          ctx.fillStyle = "#fff"; ctx.font = "bold 10px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-          ctx.fillText(String(n + 1), px, chartArea.top + 8.5);
-        });
-        ctx.restore();
+        const { ctx, chartArea, scales } = chart, x = scales.x, y = scales.y;
+        if (!chartArea) return;
+        if (o.referencia) {
+          const yPix = y.getPixelForValue(o.referencia.valor);
+          if (yPix >= chartArea.top && yPix <= chartArea.bottom) {
+            ctx.save();
+            ctx.strokeStyle = o.referencia.cor || "#cc0000";
+            ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]);
+            ctx.beginPath(); ctx.moveTo(chartArea.left, yPix); ctx.lineTo(chartArea.right, yPix); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillStyle = o.referencia.cor || "#cc0000";
+            ctx.font = "italic 11px system-ui, sans-serif";
+            ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+            ctx.fillText(o.referencia.rotulo || "", chartArea.right - 4, yPix - 3);
+            ctx.restore();
+          }
+        }
+        if (eventosIdx.length) {
+          ctx.save();
+          eventosIdx.forEach((ev, n) => {
+            if (ev.i < x.min || ev.i > x.max) return;
+            const px = x.getPixelForValue(ev.i);
+            ctx.strokeStyle = COR.evento; ctx.fillStyle = COR.evento; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(px, chartArea.top + 14); ctx.lineTo(px, chartArea.bottom); ctx.stroke(); ctx.setLineDash([]);
+            ctx.beginPath(); ctx.arc(px, chartArea.top + 8, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#fff"; ctx.font = "bold 10px system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(String(n + 1), px, chartArea.top + 8.5);
+          });
+          ctx.restore();
+        }
       },
     }];
 
     const chart = new Chart(canvas, {
       type: "line", data: { labels: [], datasets: [] }, plugins,
       options: {
-        responsive: true, maintainAspectRatio: false, animation: { duration: 250 },
+        responsive: true, maintainAspectRatio: false,
+        animation: SEM_ANIMACAO() ? false : { duration: 500, easing: "easeOutQuart" },
         interaction: { mode: "index", intersect: false }, layout: { padding: { top: 4, right: 6 } },
         plugins: {
           legend: { display: true, position: "bottom", labels: { boxWidth: 22, boxHeight: 2, color: COR.texto, padding: 14, font: { size: 13 } } },
@@ -308,20 +344,45 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
       eventosIdx = o.eventos
         .map((e) => ({ i: d.periodos.findIndex((m) => `${m.ano}-${String(m.mes).padStart(2, "0")}` === e.periodo), rotulo: e.rotulo }))
         .filter((e) => e.i >= 0);
+      const idxPorLabel = {};
+      d.series.forEach((sr, k) => { idxPorLabel[sr.label] = k; });
       chart.data.labels = d.periodos.map((m) => rotCurto(m.ano, m.mes));
       chart.data.datasets = d.series.map((sr, k) => {
         const cor = sr.cor || CATEGORICAS[k % CATEGORICAS.length];
-        return { label: sr.label, data: sr.dados, borderColor: cor, backgroundColor: cor, borderWidth: sr.largura || 2.5,
-          borderDash: sr.tracejado ? [6, 4] : [], pointRadius: 0, pointHoverRadius: 6, pointHoverBackgroundColor: cor,
-          pointHoverBorderColor: "#fff", pointHoverBorderWidth: 2, tension: 0.2, spanGaps: false };
+        let bg = cor;
+        if (o.gradienteNoFill && sr.fill) {
+          bg = (ctx2) => {
+            const { ctx, chartArea } = ctx2.chart;
+            if (!chartArea) return hexToRgba(cor, 0.15);
+            const g = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+            g.addColorStop(0, hexToRgba(cor, 0.35));
+            g.addColorStop(1, hexToRgba(cor, 0.02));
+            return g;
+          };
+        }
+        return {
+          label: sr.label, data: sr.dados, borderColor: cor, backgroundColor: bg,
+          borderWidth: sr.largura || 2.5, borderDash: sr.tracejado ? [6, 4] : [],
+          fill: sr.fill ? "origin" : false, pointRadius: 0, pointHoverRadius: 6,
+          pointHoverBackgroundColor: cor, pointHoverBorderColor: "#fff", pointHoverBorderWidth: 2,
+          tension: 0.2, spanGaps: false,
+        };
       });
+      if (Array.isArray(o.fillBetween)) {
+        o.fillBetween.forEach((fb) => {
+          const idx = idxPorLabel[fb.serie], idxAlvo = idxPorLabel[fb.fillTo];
+          if (idx == null || idxAlvo == null) return;
+          chart.data.datasets[idx].fill = idxAlvo;
+          chart.data.datasets[idx].backgroundColor = fb.cor || hexToRgba(chart.data.datasets[idx].borderColor, 0.15);
+        });
+      }
       chart.options.plugins.legend.display = d.series.length > 1;
       chart.options.plugins.legend.labels.generateLabels = (c) => Chart.defaults.plugins.legend.labels.generateLabels(c).map((l) => {
         l.lineDash = c.data.datasets[l.datasetIndex].borderDash || []; l.lineWidth = 2; l.fillStyle = l.strokeStyle; return l;
       });
       canvas.setAttribute("role", "img");
       canvas.setAttribute("aria-label", d.ariaLabel || `Série mensal com ${d.periodos.length} meses.`);
-      chart.update("none"); chart.resetZoom("none"); marcar(0);
+      chart.update(); chart.resetZoom("none"); marcar(0);
       lista.innerHTML = eventosIdx.map((e, n) =>
         `<li><span class="serie-ev-num" aria-hidden="true">${n + 1}</span><strong>${rotLongo(d.periodos[e.i].ano, d.periodos[e.i].mes)}:</strong> ${e.rotulo}</li>`).join("");
       lista.hidden = !eventosIdx.length;
@@ -342,5 +403,5 @@ Depende de: Chart.js 4, hammerjs e chartjs-plugin-zoom (assets/vendor).
     return (canvas._serieGenerica = { chart, definir, configurar, periodo, resetar: () => { chart.resetZoom(); marcar(0); } });
   }
 
-  window.SerieInterativa = { criar, montarSeries, criarGenerica, CATEGORICAS };
+  window.SerieInterativa = { criar, montarSeries, criarGenerica, CATEGORICAS, hexToRgba };
 })();
