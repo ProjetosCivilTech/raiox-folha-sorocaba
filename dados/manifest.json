@@ -1,10 +1,10 @@
 {
-  "gerado_em": "2026-10-16T19:58:35",
+  "gerado_em": "2026-10-17T08:30:40",
   "fonte": "Portal da Transparencia de Sorocaba",
   "url_fonte": "https://transparencia.sorocaba.sp.gov.br",
   "publicado_por": "Observatorio Social do Brasil - Sorocaba",
   "total_arquivos": 50,
-  "tamanho_total_kb": 952.4,
+  "tamanho_total_kb": 954.9,
   "arquivos": [
     {
       "arquivo": "auditoria.json",
@@ -135,8 +135,8 @@
     {
       "arquivo": "histograma_salarial.csv",
       "origem": "agregados",
-      "tamanho_bytes": 311,
-      "tamanho_kb": 0.3
+      "tamanho_bytes": 512,
+      "tamanho_kb": 0.5
     },
     {
       "arquivo": "kpis.json",
@@ -153,31 +153,31 @@
     {
       "arquivo": "municipio_cargo.csv",
       "origem": "agregados",
-      "tamanho_bytes": 1885,
-      "tamanho_kb": 1.8
+      "tamanho_bytes": 2095,
+      "tamanho_kb": 2.0
     },
     {
       "arquivo": "municipio_escolaridade.csv",
       "origem": "agregados",
-      "tamanho_bytes": 807,
+      "tamanho_bytes": 810,
       "tamanho_kb": 0.8
     },
     {
       "arquivo": "municipio_gini.csv",
       "origem": "agregados",
-      "tamanho_bytes": 74,
+      "tamanho_bytes": 77,
       "tamanho_kb": 0.1
     },
     {
       "arquivo": "municipio_percentis.csv",
       "origem": "agregados",
-      "tamanho_bytes": 151,
-      "tamanho_kb": 0.1
+      "tamanho_bytes": 154,
+      "tamanho_kb": 0.2
     },
     {
       "arquivo": "municipio_tempo.csv",
       "origem": "agregados",
-      "tamanho_bytes": 530,
+      "tamanho_bytes": 532,
       "tamanho_kb": 0.5
     },
     {
@@ -249,19 +249,19 @@
     {
       "arquivo": "secretaria_cargo.csv",
       "origem": "agregados",
-      "tamanho_bytes": 13853,
-      "tamanho_kb": 13.5
+      "tamanho_bytes": 15689,
+      "tamanho_kb": 15.3
     },
     {
       "arquivo": "secretaria_escolaridade.csv",
       "origem": "agregados",
-      "tamanho_bytes": 10948,
+      "tamanho_bytes": 10927,
       "tamanho_kb": 10.7
     },
     {
       "arquivo": "secretaria_gini.csv",
       "origem": "agregados",
-      "tamanho_bytes": 806,
+      "tamanho_bytes": 807,
       "tamanho_kb": 0.8
     },
     {
@@ -273,14 +273,14 @@
     {
       "arquivo": "secretaria_percentis.csv",
       "origem": "agregados",
-      "tamanho_bytes": 2096,
+      "tamanho_bytes": 2097,
       "tamanho_kb": 2.0
     },
     {
       "arquivo": "secretaria_tempo.csv",
       "origem": "agregados",
-      "tamanho_bytes": 9929,
-      "tamanho_kb": 9.7
+      "tamanho_bytes": 10119,
+      "tamanho_kb": 9.9
     },
     {
       "arquivo": "top_secretarias.csv",

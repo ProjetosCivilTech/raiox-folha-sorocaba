@@ -1,11 +1,11 @@
-secretaria_canonica,escolaridade_canonica,n,folha_media,folha_mediana
-Município (todas as secretarias),Sem escolaridade formal registrada,11,4281.15,3745.37
-Município (todas as secretarias),Fundamental incompleto,67,5812.83,5316.72
-Município (todas as secretarias),Fundamental completo,280,5285.38,4515.15
-Município (todas as secretarias),Medio incompleto,18,7479.74,6874.66
-Município (todas as secretarias),Medio completo,3625,5872.18,5167.26
-Município (todas as secretarias),Superior incompleto,993,2373.36,1084.8
-Município (todas as secretarias),Superior completo,7306,8583.29,7150.18
-Município (todas as secretarias),Pos-graduacao,1934,15551.29,14035.95
-Município (todas as secretarias),Mestrado,107,20470.98,17589.04
-Município (todas as secretarias),Doutorado,27,22600.99,21133.89
+﻿secretaria_canonica;escolaridade_canonica;n;folha_media;folha_mediana
+Município (todas as secretarias);Sem escolaridade formal registrada;11;4281.15;3745.37
+Município (todas as secretarias);Fundamental incompleto;67;5812.83;5316.72
+Município (todas as secretarias);Fundamental completo;280;5285.38;4515.15
+Município (todas as secretarias);Medio incompleto;18;7479.74;6874.66
+Município (todas as secretarias);Medio completo;3625;5872.18;5167.26
+Município (todas as secretarias);Superior incompleto;993;2373.36;1084.8
+Município (todas as secretarias);Superior completo;7306;8583.29;7150.18
+Município (todas as secretarias);Pos-graduacao;1934;15551.29;14035.95
+Município (todas as secretarias);Mestrado;107;20470.98;17589.04
+Município (todas as secretarias);Doutorado;27;22600.99;21133.89

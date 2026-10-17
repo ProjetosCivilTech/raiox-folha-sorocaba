@@ -1,8 +1,8 @@
-secretaria_canonica,faixa_tempo,n,folha_media,folha_mediana
-Município (todas as secretarias),0-5 anos,5701,5677.34,4567.46
-Município (todas as secretarias),6-10 anos,2112,7400.59,5569.91
-Município (todas as secretarias),11-15 anos,3305,9473.85,7831.75
-Município (todas as secretarias),16-20 anos,1885,12753.55,11574.68
-Município (todas as secretarias),21-25 anos,765,13016.47,12559.64
-Município (todas as secretarias),26-30 anos,181,15509.99,15310.46
-Município (todas as secretarias),30+ anos,371,13620.99,11002.08
+﻿secretaria_canonica;faixa_tempo;n;folha_media;folha_mediana
+Município (todas as secretarias);0-5 anos;5701;5677.34;4567.46
+Município (todas as secretarias);6-10 anos;2112;7400.59;5569.91
+Município (todas as secretarias);11-15 anos;3305;9473.85;7831.75
+Município (todas as secretarias);16-20 anos;1885;12753.55;11574.68
+Município (todas as secretarias);21-25 anos;765;13016.47;12559.64
+Município (todas as secretarias);26-30 anos;181;15509.99;15310.46
+Município (todas as secretarias);30+ anos;419;12333.77;9543.85

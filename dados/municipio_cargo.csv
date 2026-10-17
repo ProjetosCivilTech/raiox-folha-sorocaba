@@ -1,21 +1,21 @@
-secretaria_canonica,cargo,n,folha_total,folha_media,folha_mediana,pct_feminino
-Município (todas as secretarias),AUTONOMOS - PROF. EVENTUAL,2746,5784035.99,2106.35,2572.32,95.56
-Município (todas as secretarias),PEB I,2165,28482602.03,13155.94,12503.93,96.33
-Município (todas as secretarias),AUX. DE EDUCACAO,1700,8534115.73,5020.07,4778.01,92.78
-Município (todas as secretarias),TECNICO DE ENFERMAGEM,656,5110344.33,7790.16,7336.12,79.27
-Município (todas as secretarias),PEB I CLT,564,3278371.58,5812.72,4876.53,96.76
-Município (todas as secretarias),TEC.DE CONTROLE ADMINISTRATIVO,505,2793032.03,5530.76,4587.47,58.5
-Município (todas as secretarias),ESTAGIARIO NIVEL SUPERIOR,484,490210.8,1012.83,1084.8,76.62
-Município (todas as secretarias),AUX. DE ADMINISTRACAO,445,2974119.61,6683.41,5569.57,73.47
-Município (todas as secretarias),GCM-2A CLASSE,337,2545676.7,7553.94,6526.29,19.4
-Município (todas as secretarias),MEDICO 75H,283,6269486.7,22153.66,18601.17,46.38
-Município (todas as secretarias),ENFERMEIRO,270,4386179.21,16245.11,13918.4,89.1
-Município (todas as secretarias),CHEFE DE SECAO,259,3366449.14,12997.87,12184.47,64.31
-Município (todas as secretarias),INSPETOR DE ALUNOS,240,1062205.79,4425.86,4156.02,62.55
-Município (todas as secretarias),AGENTE COMUNITARIO DE SAUDE,150,770617.35,5137.45,5167.27,90.54
-Município (todas as secretarias),SECRETARIO DE ESCOLA,148,834860.13,5640.95,5212.8,56.16
-Município (todas as secretarias),DIRETOR DE ESCOLA,148,2786952.59,18830.76,16466.09,80.41
-Município (todas as secretarias),MOTORISTA,141,956452.57,6783.35,6360.98,5.0
-Município (todas as secretarias),ASSESSOR DE GABINETE,124,1826714.01,14731.56,15452.79,45.08
-Município (todas as secretarias),MEDICO I 100H,122,2097445.89,17192.18,14036.94,62.81
-Município (todas as secretarias),CHEFE DE DIVISAO,118,2084613.24,17666.21,15817.26,63.79
+﻿secretaria_canonica;cargo;familia_cargo;n;folha_total;folha_media;folha_mediana;pct_feminino
+Município (todas as secretarias);AUTONOMOS - PROF. EVENTUAL;Temporário;2746;5784035.99;2106.35;2572.32;95.56
+Município (todas as secretarias);PEB I;Docência;2165;28482602.03;13155.94;12503.93;96.33
+Município (todas as secretarias);AUX. DE EDUCACAO;Apoio;1700;8534115.73;5020.07;4778.01;92.78
+Município (todas as secretarias);TECNICO DE ENFERMAGEM;Saúde;656;5110344.33;7790.16;7336.12;79.27
+Município (todas as secretarias);PEB I CLT;Docência;564;3278371.58;5812.72;4876.53;96.76
+Município (todas as secretarias);TEC.DE CONTROLE ADMINISTRATIVO;Administrativo;505;2793032.03;5530.76;4587.47;58.5
+Município (todas as secretarias);ESTAGIARIO NIVEL SUPERIOR;Temporário;484;490210.8;1012.83;1084.8;76.62
+Município (todas as secretarias);AUX. DE ADMINISTRACAO;Administrativo;445;2974119.61;6683.41;5569.57;73.47
+Município (todas as secretarias);GCM-2A CLASSE;Segurança;337;2545676.7;7553.94;6526.29;19.4
+Município (todas as secretarias);MEDICO 75H;Saúde;283;6269486.7;22153.66;18601.17;46.38
+Município (todas as secretarias);ENFERMEIRO;Saúde;270;4386179.21;16245.11;13918.4;89.1
+Município (todas as secretarias);CHEFE DE SECAO;Liderança;259;3366449.14;12997.87;12184.47;64.31
+Município (todas as secretarias);INSPETOR DE ALUNOS;Apoio;240;1062205.79;4425.86;4156.02;62.55
+Município (todas as secretarias);AGENTE COMUNITARIO DE SAUDE;Saúde;150;770617.35;5137.45;5167.27;90.54
+Município (todas as secretarias);DIRETOR DE ESCOLA;Liderança;148;2786952.59;18830.76;16466.09;80.41
+Município (todas as secretarias);SECRETARIO DE ESCOLA;Liderança;148;834860.13;5640.95;5212.8;56.16
+Município (todas as secretarias);MOTORISTA;Apoio;141;956452.57;6783.35;6360.98;5.0
+Município (todas as secretarias);ASSESSOR DE GABINETE;Liderança;124;1826714.01;14731.56;15452.79;45.08
+Município (todas as secretarias);MEDICO I 100H;Saúde;122;2097445.89;17192.18;14036.94;62.81
+Município (todas as secretarias);CHEFE DE DIVISAO;Liderança;118;2084613.24;17666.21;15817.26;63.79
