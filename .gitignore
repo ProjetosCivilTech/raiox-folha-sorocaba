@@ -15,4 +15,4 @@ desktop.ini
 *.log
 # Pastas de backup do projeto
 .bkp_*/
-.autofix_backup_*/
+.autofix_backup_*/_backup_*/
