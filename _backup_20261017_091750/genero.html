@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gênero — Raio-X do Quadro de Pessoal</title>
+  <link rel="canonical" href="https://projetosciviltech.github.io/raiox-folha-sorocaba/genero.html">
+  <meta name="description" content="Análise de gênero no quadro de pessoal da Prefeitura de Sorocaba: representação, liderança, gap salarial e evolução temporal.">
+
+  <meta property="og:title" content="Gênero no quadro de pessoal — Sorocaba">
+  <meta property="og:description" content="Análise de representação, liderança e gap salarial por gênero no quadro da Prefeitura de Sorocaba.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/genero.html">
+  <meta property="og:site_name" content="Observatório Social do Brasil — Sorocaba">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/logo-obs-brasil.png">
+  <meta name="twitter:image" content="https://projetosciviltech.github.io/raiox-folha-sorocaba/imagens/logo-obs-brasil.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gênero no quadro de pessoal — Sorocaba">
+  <meta name="twitter:description" content="Análise de representação, liderança e gap salarial no quadro municipal.">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="assets/style.css?v=8">
+
+  <script>
+    document.documentElement.classList.remove("no-js");
+    document.documentElement.classList.add("js");
+  </script>
+</head>
+<body>
+
+  <a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
+
+  <!-- =====================================================================
+       CABEÇALHO UNIFICADO
+       ===================================================================== -->
+  <header class="cabecalho">
+    <div class="cabecalho-conteudo">
+      <div class="cabecalho-identidade">
+        <div class="cabecalho-logo-completo">
+          <img src="imagens/logo-obs-brasil.png" alt="Observatório Social do Brasil - Sorocaba">
+        </div>
+        <div class="cabecalho-titulo">
+          <h1>Raio-X do Quadro de Pessoal</h1>
+          <p>Prefeitura de Sorocaba — Observatório Social do Brasil</p>
+        </div>
+      </div>
+      <div class="cabecalho-meta">
+        <img class="cabecalho-lupa" src="imagens/lupa-mapa.png" alt="Ícone de análise" aria-hidden="true">
+        <span class="badge-atualizacao" id="badge-atualizacao">Carregando…</span>
+        <div class="cabecalho-periodo" id="cabecalho-periodo">
+          <span>Carregando período…</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       MENU
+       ===================================================================== -->
+  <nav class="menu" aria-label="Menu principal">
+    <div class="menu-conteudo">
+      <a href="index.html">Início</a>
+      <a href="secretarias.html">Secretarias</a>
+      <a href="quadro.html">Perfil das Unidades</a>
+      <a href="genero.html" class="ativo" aria-current="page">Gênero</a>
+      <a href="salarios.html">Salários</a>
+      <a href="sobre.html">Sobre</a>
+      <button class="menu-hamburguer" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    </div>
+  </nav>
+
+  <!-- =====================================================================
+       DRAWER (menu lateral mobile)
+       ===================================================================== -->
+  <button class="botao-lateral" aria-label="Abrir menu lateral" title="Menu lateral">☰</button>
+  <div class="backdrop" aria-hidden="true"></div>
+  <aside class="drawer" aria-hidden="true">
+    <div class="drawer-cabecalho">
+      <h2>Navegação</h2>
+      <p>Raio-X do Quadro de Pessoal</p>
+      <button class="drawer-fechar" aria-label="Fechar menu">×</button>
+    </div>
+    <nav class="drawer-nav" aria-label="Menu lateral">
+      <a href="index.html">Início</a>
+      <a href="secretarias.html">Secretarias</a>
+      <a href="quadro.html">Perfil das Unidades</a>
+      <a href="genero.html" aria-current="page">Gênero</a>
+      <a href="salarios.html">Salários</a>
+      <a href="sobre.html">Sobre</a>
+    </nav>
+    <div class="drawer-rodape">
+      <strong>Fonte:</strong> Portal da Transparência de Sorocaba<br>
+      Gênero inferido por nome (IBGE/Censo 2010, tratado por Brasil.IO).
+    </div>
+  </aside>
+
+  <nav class="breadcrumb" id="breadcrumb" aria-label="Você está em"></nav>
+
+  <!-- =====================================================================
+       CONTEÚDO PRINCIPAL
+       ===================================================================== -->
+  <main id="conteudo-principal" aria-live="polite">
+
+    <section class="secao" id="apresentacao">
+      <h2 class="secao-titulo">Gênero no quadro de pessoal</h2>
+      <p style="color: var(--cinza-texto); margin-bottom: 1.25rem; max-width: 780px;">
+        Análise da composição por gênero da folha municipal. O gênero é inferido a
+        partir do primeiro nome, com base no Censo 2010 do IBGE. Nomes ambíguos
+        ficam como "indefinido" e não entram nos cruzamentos.
+      </p>
+    </section>
+
+    <!-- Cobertura da análise -->
+    <section class="secao" id="cobertura-genero">
+      <h2 class="secao-titulo">Cobertura da análise</h2>
+      <div class="cartao">
+        <p style="margin-bottom: 1rem; color: var(--cinza-texto);">
+          A inferência de gênero por nome tem limitações. Informamos abaixo quantas
+          matrículas foram classificadas e quantas ficaram como <em>"indefinido"</em>
+          (e foram excluídas dos cruzamentos).
+        </p>
+        <dl class="selo" id="cobertura-genero-conteudo">
+          <div class="carregando">Carregando…</div>
+        </dl>
+        <noscript>
+          <div class="aviso-noscript">
+            Para ver a cobertura, baixe diretamente o arquivo
+            <a href="dados/excel/genero_geral.xlsx" download>genero_geral.xlsx</a>.
+          </div>
+        </noscript>
+      </div>
+    </section>
+
+    <!-- Disclaimer principal — blindagem contra interpretações erradas -->
+    <section class="secao" id="disclaimer">
+      <div class="aviso-metodologico" style="font-size: 0.9rem; line-height: 1.6;">
+        <p style="margin-bottom: 0.75rem;">
+          <strong>Como o gênero é definido nesta análise.</strong>
+          O gênero de cada servidor é <strong>inferido</strong> a partir do primeiro nome,
+          com base no Censo 2010 do IBGE (tratado por Álvaro Justen/Brasil.IO, licença CC-BY-SA).
+          Não é autodeclaração. Nomes com classificação ambígua são agrupados como
+          <em>"indefinido"</em> e <strong>excluídos</strong> dos cruzamentos por cargo,
+          secretaria, escolaridade e faixa salarial.
+        </p>
+        <p style="margin-bottom: 0.75rem;">
+          <strong>Diferença descritiva, não causal.</strong> Os números desta página descrevem
+          <strong>padrões agregados</strong> do quadro municipal. Diferenças salariais brutas
+          <strong>não consideram</strong> variáveis como tempo de casa, nível de cargo,
+          escolaridade ou jornada. Para uma análise de equidade seria necessário
+          <strong>controle estatístico multivariado</strong>, que este painel não realiza.
+        </p>
+        <p>
+          <strong>Não substitui análise de casos individuais.</strong> Os resultados
+          <strong>não devem ser usados como prova</strong> em processos individuais sem
+          apuração específica. O que o painel mostra são padrões de composição do quadro,
+          não julgamentos sobre pessoas ou gestões.
+        </p>
+      </div>
+    </section>
+
+    <!-- Achados principais -->
+    <section class="secao" id="achados">
+      <h2 class="secao-titulo">Achados principais</h2>
+      <div class="kpis" id="insights">
+        <div class="carregando">Carregando achados…</div>
+      </div>
+    </section>
+
+    <!-- Panorama geral -->
+    <section class="secao" id="panorama">
+      <h2 class="secao-titulo">Panorama geral</h2>
+      <div class="grade-2">
+        <div class="cartao">
+          <div class="cartao-titulo">Distribuição por gênero (último mês)</div>
+          <div class="grafico-container baixo">
+            <canvas id="grafico-geral" aria-label="Gráfico de rosca mostrando a distribuição percentual de servidores por gênero no último mês"></canvas>
+          </div>
+        </div>
+        <div class="cartao">
+          <div class="cartao-titulo">Evolução da participação feminina</div>
+          <div class="grafico-container baixo">
+            <canvas id="grafico-evolucao" aria-label="Gráfico de linha mostrando a evolução da participação feminina na folha ao longo dos meses"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="cartao" style="margin-top:1.5rem;">
+        <div class="cartao-titulo">Composição por gênero (acumulado)</div>
+        <div class="tabela-wrap">
+          <table id="tabela-geral">
+            <caption>Distribuição de matrículas e folha por gênero inferido, no período acumulado.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Gênero</th>
+                <th scope="col" class="numerico">Servidores</th>
+                <th scope="col" class="numerico">% das matrículas</th>
+                <th scope="col" class="numerico">Folha total</th>
+                <th scope="col" class="numerico">% da folha</th>
+                <th scope="col" class="numerico">Folha média</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="6" class="carregando">Carregando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Liderança -->
+    <section class="secao" id="lideranca">
+      <h2 class="secao-titulo">Representação em cargos de liderança</h2>
+      <div class="aviso-metodologico" id="insight-lideranca">Carregando…</div>
+
+      <div class="aviso-metodologico" style="margin-bottom: 1rem;">
+        <strong>Definição de liderança:</strong> consideramos "cargos de liderança" aqueles
+        cuja nomenclatura contém termos como <em>diretor, chefe, coordenador, supervisor,
+        assessor, secretário de escola, gestor</em>. A classificação é feita por análise
+        do nome do cargo, não por estrutura organizacional formal. Um cargo pode ter
+        nomenclatura de chefia sem exercer liderança efetiva, e vice-versa.
+      </div>
+      <div class="cartao">
+        <div class="grafico-container baixo">
+          <canvas id="grafico-lideranca" aria-label="Gráfico de barras comparando a participação feminina entre a base geral, funções não-liderança e cargos de liderança"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Composição por categoria -->
+    <section class="secao" id="categoria">
+      <h2 class="secao-titulo">Composição por categoria de vínculo</h2>
+      <div class="cartao">
+        <div class="grafico-container">
+          <canvas id="grafico-categoria" aria-label="Gráfico de barras horizontais mostrando o percentual feminino em cada categoria de vínculo"></canvas>
+        </div>
+      </div>
+      <div class="cartao" style="margin-top:1.5rem;">
+        <div class="tabela-wrap">
+          <table id="tabela-categoria">
+            <caption>Participação feminina por categoria de vínculo, com folha média de cada gênero.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Categoria</th>
+                <th scope="col" class="numerico">Servidores</th>
+                <th scope="col" class="numerico">% feminino</th>
+                <th scope="col" class="numerico">Folha total</th>
+                <th scope="col" class="numerico">Folha média (F)</th>
+                <th scope="col" class="numerico">Folha média (M)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="6" class="carregando">Carregando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Participação por secretaria -->
+    <section class="secao" id="secretaria">
+      <h2 class="secao-titulo">Participação feminina por secretaria</h2>
+      <div class="cartao">
+        <div class="grafico-container" style="height: 520px;">
+          <canvas id="grafico-secretaria" aria-label="Gráfico de barras horizontais mostrando o percentual feminino em cada secretaria municipal"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gap salarial — bloco mais crítico da blindagem -->
+    <section class="secao" id="gap-salarial">
+      <h2 class="secao-titulo">Diferença salarial por cargo</h2>
+      <div class="aviso-metodologico" id="insight-gap">Carregando…</div>
+
+      <div class="aviso-metodologico" style="margin-bottom: 1rem;">
+        <p><strong>Leitura cautelosa:</strong> a diferença salarial apresentada é uma medida <strong>descritiva (bruta)</strong>, e não causal. Este painel <em>não</em> controla variáveis como tempo de casa, nível de cargo, escolaridade ou carga horária.</p>
+        <p>Portanto, o "gap" reflete majoritariamente a <strong>composição do quadro</strong> (ex.: maior presença feminina em cargos de base e masculina em cargos de chefia ou de carreiras específicas), e não necessariamente diferença de pagamento para a <em>mesma</em> função.</p>
+        <p><strong>Robustez estatística:</strong> para evitar ruído, cargos com menos de <strong>20 servidores de cada gênero</strong> são automaticamente excluídos do gráfico. A tabela abaixo usa corte de <strong>n ≥ 10</strong> (o número aparece na coluna "Servidores (F/M)"), priorizando cobertura. Cargos com amostra insuficiente são omitidos.</p>
+      </div>
+
+      <div class="cartao">
+        <div class="grafico-container" style="height: 560px;">
+          <canvas id="grafico-gap" aria-label="Gráfico de barras horizontais mostrando a diferença salarial entre homens e mulheres nos cargos com pelo menos 20 servidores de cada gênero"></canvas>
+        </div>
+      </div>
+      <div class="cartao" style="margin-top:1.5rem;">
+        <div class="tabela-wrap" style="max-height: 480px; overflow-y: auto;">
+          <table id="tabela-gap">
+            <caption>Diferença salarial por cargo (corte mínimo de 10 servidores de cada gênero).</caption>
+            <thead>
+              <tr>
+                <th scope="col">Cargo</th>
+                <th scope="col" class="numerico">Servidores (F)</th>
+                <th scope="col" class="numerico">Servidores (M)</th>
+                <th scope="col" class="numerico">Folha média (F)</th>
+                <th scope="col" class="numerico">Folha média (M)</th>
+                <th scope="col" class="numerico">Gap %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="6" class="carregando">Carregando…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Faixa salarial -->
+    <section class="secao" id="faixa-salarial">
+      <h2 class="secao-titulo">Distribuição por faixa salarial</h2>
+      <div class="cartao">
+        <div class="grafico-container baixo">
+          <canvas id="grafico-faixa" aria-label="Gráfico de barras comparando a distribuição de homens e mulheres em cada faixa salarial"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selo de auditoria -->
+    <section class="secao" id="selo">
+      <h2 class="secao-titulo">Selo de auditoria</h2>
+      <dl class="selo" id="selo-conteudo">
+        <div class="carregando">Carregando selo…</div>
+      </dl>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       RODAPÉ
+       ===================================================================== -->
+  <footer class="rodape">
+    <div class="rodape-conteudo">
+      <div>
+        <h3>Sobre esta análise</h3>
+        <p>
+          Gênero inferido a partir do primeiro nome, usando a base do IBGE/Censo 2010
+          tratada por Álvaro Justen/Brasil.IO (licença CC-BY-SA). Nomes ambíguos
+          ficam como "indefinido". A análise aponta padrões agregados — não substitui
+          investigação individual de casos.
+        </p>
+      </div>
+      <div>
+        <h3>Fontes</h3>
+        <p>
+          <a href="https://transparencia.sorocaba.sp.gov.br/" target="_blank" rel="noopener">Portal da Transparência</a><br>
+          <a href="https://brasil.io/dataset/genero-nomes/nomes/" target="_blank" rel="noopener">Brasil.IO — Gênero de Nomes</a>
+        </p>
+      </div>
+      <div>
+        <h3>Encontrou um erro?</h3>
+        <p>
+          <a href="mailto:sorocaba@osbrasil.org.br?subject=Erro%20no%20Raio-X%20da%20Folha">Envie um e-mail</a><br>
+          <a href="https://github.com/ProjetosCivilTech/raiox-folha-sorocaba/issues" target="_blank" rel="noopener">Abra uma issue no GitHub</a>
+        </p>
+      </div>
+      <div>
+        <h3>Navegação</h3>
+        <p>
+          <a href="index.html">Início</a><br>
+          <a href="secretarias.html">Secretarias</a><br>
+          <a href="quadro.html">Perfil das Unidades</a><br>
+          <a href="genero.html">Gênero</a><br>
+          <a href="salarios.html">Salários</a><br>
+          <a href="sobre.html">Sobre</a>
+        </p>
+      </div>
+    </div>
+    <div class="rodape-final">
+      Observatório Social do Brasil — Sorocaba · Dados públicos organizados para controle social
+    </div>
+  </footer>
+
+  <noscript>
+    <div class="aviso-metodologico" style="margin: 2rem auto; max-width: 800px;">
+      <strong>Este painel usa JavaScript para carregar os dados e renderizar gráficos.</strong>
+      Sem JavaScript, os dados brutos continuam disponíveis na pasta
+      <a href="sobre.html#dados-abertos">lista de dados abertos</a> (formato XLSX).
+    </div>
+  </noscript>
+
+  <script src="assets/vendor/chart.umd.js" defer></script>
+  <script src="assets/vendor/hammer.min.js" defer></script>
+  <script src="assets/vendor/chartjs-plugin-zoom.min.js" defer></script>
+  <script src="assets/vendor/papaparse.min.js" defer></script>
+  <script src="assets/app.js?v=8" defer></script>
+  <script src="assets/serie_interativa.js?v=8" defer></script>
+  <script src="assets/pagina_genero.js?v=8" defer></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+
+Sitemap: https://projetosciviltech.github.io/raiox-folha-sorocaba/sitemap.xml
